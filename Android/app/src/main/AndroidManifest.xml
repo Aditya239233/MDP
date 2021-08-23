@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MDPAndroid">
         <activity
+            android:name=".arena_map"
+            android:exported="true" />
+        <activity
             android:name=".interactive_control"
             android:exported="true"
             android:parentActivityName=".MainActivity" />
