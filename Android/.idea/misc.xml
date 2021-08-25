@@ -7,7 +7,9 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.228125" />
         <entry key="app/src/main/res/layout/activity_interactive_control.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/arena_map.xml" value="0.23020833333333332" />
         <entry key="app/src/main/res/layout/bluetooth.xml" value="0.26131120405373587" />
+        <entry key="app/src/main/res/layout/bluetooth_home.xml" value="0.10068533662869839" />
         <entry key="app/src/main/res/layout/home.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/layout/interactive_control_layout.xml" value="0.22552083333333334" />
         <entry key="app/src/main/res/layout/interactive_layout.xml" value="0.23958333333333334" />

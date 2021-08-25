@@ -5,56 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_anchor="@+id/linearLayout"
-        app:layout_anchorGravity="center"
-        tools:ignore="NotSibling">
-
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#039BE5"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/bluetoothButton"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginLeft="250dp"
-                android:background="@drawable/rounded_corner"
-                android:backgroundTint="@color/design_default_color_primary"
-                android:foreground="@android:drawable/stat_sys_data_bluetooth"
-                app:backgroundTint="#2196F3" />
-
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <TextView
-            android:id="@+id/showReceived"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
-
-        <EditText
-            android:id="@+id/inputMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name" />
-
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Send" />
-    </LinearLayout>
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mdp_android">
+
     <uses-feature
         android:name="android.hardware.bluetooth"
         android:required="true" />
@@ -19,6 +20,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MDPAndroid">
+        <activity
+            android:name=".bluetooth_home"
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".arena_map"
             android:exported="true" />
