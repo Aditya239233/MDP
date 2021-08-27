@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.spatial.kdtree as kd
 from .angles import Angle
+import imageio
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) +
                 "/../../planner/")
@@ -606,6 +607,9 @@ def get_dist_bet_waypoints(waypoint_dict, ox, oy):
             path = hybrid_astar_planning(sx, sy, syaw0, gx, gy, gyaw0,
                                     ox, oy, C.XY_RESO, C.YAW_RESO)
 
+            if path == None:
+                raise Exception(f"Path is not found for {waypoint_dict}")
+
             dist = find_distance(path.x, path.y)
 
             # assuming label is an integer
@@ -658,7 +662,12 @@ def get_shortest_tour(waypoint_dict, dist_vector):
 def solve(obstacles):
     ox, oy, ox_face, oy_face = design_obstacles(X, Y, obstacles)
     waypoint_dict = generate_waypoints(CAR_START_POS, obstacles)
-    dist_vector = get_dist_bet_waypoints(waypoint_dict, ox, oy)
+
+    try:
+        dist_vector = get_dist_bet_waypoints(waypoint_dict, ox, oy)
+    except Exception as e:
+        raise
+
     tour = get_shortest_tour(waypoint_dict, dist_vector)
     
 
@@ -673,18 +682,16 @@ def solve(obstacles):
                                  ox, oy, C.XY_RESO, C.YAW_RESO)
 
         if not path:
-            print(f"{tour[i]} and {tour[i+1]} don't have a path!")
-            return
+            raise Exception(f"{tour[i]} and {tour[i+1]} don't have a path!")
 
         paths.append(path)
 
     return paths
 
 
-def simulate(obstacles):
+def simulate(list_of_paths, obstacles, save_gif=False):
     print("Simulation started")
     ox, oy, ox_face, oy_face = design_obstacles(X, Y, obstacles)
-    list_of_paths = solve(obstacles)
 
     x = []
     y = []
@@ -710,6 +717,7 @@ def simulate(obstacles):
         direction.extend(last_direction)
     
 
+    filenames = []
     for k in range(len(x)):
         plt.cla()
 
@@ -733,10 +741,24 @@ def simulate(obstacles):
         draw_car(x[k], y[k], yaw[k], steer)
         plt.title("Hybrid A*")
         plt.axis("equal")
+        if save_gif:
+            filename = f"./gif/{k}.png"
+            filenames.append(filename)
+            plt.savefig(filename)
+
         plt.pause(0.0001)
 
     plt.show()
     print("Done!")
+
+    with imageio.get_writer('./gif/mygif.gif', mode='I') as writer:
+        for filename in filenames:
+            image = imageio.imread(filename)
+            writer.append_data(image)
+        
+    # Remove files
+    for filename in set(filenames):
+        os.remove(filename)
 
 if __name__ == '__main__':
 # coor of left corner and face with image
@@ -746,4 +768,6 @@ if __name__ == '__main__':
                  (36, 34, Angle.TWO_SEVENTY_DEG),
                  (8, 30, Angle.TWO_SEVENTY_DEG)
                  ]
-    simulate(obstacles)
+
+    paths = solve(obstacles)
+    simulate(paths, obstacles)
