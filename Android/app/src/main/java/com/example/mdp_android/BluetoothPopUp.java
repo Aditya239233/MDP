@@ -247,7 +247,7 @@ public class BluetoothPopUp extends AppCompatActivity {
                 editor = sharedPreferences.edit();
                 editor.putString("connStatus", connStatusTextView.getText().toString());
                 editor.commit();
-                finish();
+//                finish();
             }
         });
 
@@ -431,9 +431,13 @@ public class BluetoothPopUp extends AppCompatActivity {
             sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
             editor = sharedPreferences.edit();
             TextView connStatusTextView = findViewById(R.id.connStatusTextView);
+            Log.d(TAG, "I'm working");
             if(status.equals("connected")){
                 try {
                     myDialog.dismiss();
+                    Log.d(TAG, String.valueOf(bluetooth_home.myDialog));
+                    bluetooth_home.myDialog.dismiss();
+
                 } catch(NullPointerException e){
                     e.printStackTrace();
                 }
@@ -458,7 +462,15 @@ public class BluetoothPopUp extends AppCompatActivity {
                 editor.commit();
 
                 try {
-                    myDialog.show();
+                    try {
+                        if (myDialog != null) myDialog.show();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.d(TAG, "Local dialog failure");
+                    }
+                    Log.d(TAG, String.valueOf(bluetooth_home.myDialog));
+                    bluetooth_home.myDialog.show();
                 }catch (Exception e){
                     Log.d(TAG, "BluetoothPopUp: mBroadcastReceiver5 Dialog show failure");
                 }

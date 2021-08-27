@@ -200,6 +200,7 @@ public class BluetoothConnectionService {
         }
     }
 
+
     private void connected(BluetoothSocket mSocket, BluetoothDevice device) {
         mDevice =  device;
         if (mInsecureAcceptThread != null) {

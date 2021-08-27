@@ -26,7 +26,7 @@ public class bluetooth_home extends AppCompatActivity {
     TextView showReceived;
     EditText inputMessage;
     Button sendButton;
-    ProgressDialog myDialog;
+    public static ProgressDialog myDialog;;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
@@ -52,6 +52,7 @@ public class bluetooth_home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 inputMessage =  findViewById(R.id.inputMessage);
+                // write message
                 String message = inputMessage.getText().toString();
                 if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
                     byte[] bytes = message.getBytes(Charset.defaultCharset());
@@ -62,7 +63,7 @@ public class bluetooth_home extends AppCompatActivity {
 
         myDialog = new ProgressDialog(bluetooth_home.this);
         myDialog.setMessage("Waiting for other device to reconnect...");
-        myDialog.setCancelable(false);
+        myDialog.setCancelable(true);
         myDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -71,43 +72,43 @@ public class bluetooth_home extends AppCompatActivity {
         });
 
     }
-    private BroadcastReceiver connectionWatcher2 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            BluetoothDevice mDevice = intent.getParcelableExtra("Device");
-            String status = intent.getStringExtra("Status");
-            Log.d(TAG, "I'm in MAIN ACTIVITY");
-            if(status.equals("connected")){
-                try {
-                    myDialog.dismiss();
-                } catch(NullPointerException e){
-                    e.printStackTrace();
-                }
-                if (sharedPreferences.contains("connStatus"))
-                {
-                    editor = sharedPreferences.edit();
-                    editor.putString("connStatus", "Connected to " + mDevice.getName());
-                    editor.commit();
-                }
-                Log.d(TAG, "connectionWatcher2: Device now connected to "+mDevice.getName());
-//                Toast.makeText(MainActivity.this, "Device now connected to "+mDevice.getName(), Toast.LENGTH_LONG).show();
-
-            }
-            else if(status.equals("disconnected")){
-                sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-                if (sharedPreferences.contains("connStatus"))
-                {
-                    editor = sharedPreferences.edit();
-                    editor.putString("connStatus", "Disconnected");
-                    editor.commit();
-                }
-                Log.d(TAG, "connectionWatcher2: Disconnected from "+mDevice.getName());
-//                Toast.makeText(MainActivity.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_LONG).show();
-
-                myDialog.show();
-            }
-        }
-    };
+//    private BroadcastReceiver connectionWatcher = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            BluetoothDevice mDevice = intent.getParcelableExtra("Device");
+//            String status = intent.getStringExtra("Status");
+//            Log.d(TAG, "I'm in MAIN ACTIVITY");
+//            if(status.equals("connected")){
+//                try {
+//                    myDialog.dismiss();
+//                } catch(NullPointerException e){
+//                    e.printStackTrace();
+//                }
+//                if (sharedPreferences.contains("connStatus"))
+//                {
+//                    editor = sharedPreferences.edit();
+//                    editor.putString("connStatus", "Connected to " + mDevice.getName());
+//                    editor.commit();
+//                }
+//                Log.d(TAG, "connectionWatcher2: Device now connected to "+mDevice.getName());
+////                Toast.makeText(MainActivity.this, "Device now connected to "+mDevice.getName(), Toast.LENGTH_LONG).show();
+//
+//            }
+//            else if(status.equals("disconnected")){
+//                sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+//                if (sharedPreferences.contains("connStatus"))
+//                {
+//                    editor = sharedPreferences.edit();
+//                    editor.putString("connStatus", "Disconnected");
+//                    editor.commit();
+//                }
+//                Log.d(TAG, "connectionWatcher2: Disconnected from "+mDevice.getName());
+////                Toast.makeText(MainActivity.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_LONG).show();
+//
+//                myDialog.show();
+//            }
+//        }
+//    };
 
     BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -121,7 +122,7 @@ public class bluetooth_home extends AppCompatActivity {
         super.onDestroy();
         try{
             LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionWatcher2);
+//            LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionWatcher);
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }
@@ -131,7 +132,7 @@ public class bluetooth_home extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         try{
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionWatcher2);
+//           LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionWatcher);
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }
@@ -142,7 +143,7 @@ public class bluetooth_home extends AppCompatActivity {
         super.onResume();
         try{
             IntentFilter filter2 = new IntentFilter("ConnectionStatus");
-            LocalBroadcastManager.getInstance(this).registerReceiver(connectionWatcher2, filter2);
+//            LocalBroadcastManager.getInstance(this).registerReceiver(connectionWatcher, filter2);
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }
