@@ -1,16 +1,35 @@
-from HybridAstarPlanner.hybrid_astar import solve, simulate, Path
-from HybridAstarPlanner.angles import Angle
+from HybridAstarPlanner.solver import save_arena_img, solve, simulate, save_arena_img
+from HybridAstarPlanner.utils import Angle
 from test.planner_test import PlannerTest
 
+import traceback
+
 def get_obstacles():
-    obstacles = [(10, 14, Angle.TWO_SEVENTY_DEG),
+    import random
+    i = random.randint(0,2)
+    obstacles = [[(10, 14, Angle.TWO_SEVENTY_DEG),
                  (20, 20, Angle.ONE_EIGHTY_DEG),
                  (30, 30, Angle.ONE_EIGHTY_DEG),
                  (36, 34, Angle.TWO_SEVENTY_DEG),
-                 (8, 30, Angle.TWO_SEVENTY_DEG)
+                 (8, 30, Angle.TWO_SEVENTY_DEG)],
+
+                [(35, 14, Angle.ONE_EIGHTY_DEG),
+                 (20, 25, Angle.ONE_EIGHTY_DEG),
+                 (30, 34, Angle.TWO_SEVENTY_DEG),
+                 (36, 34, Angle.TWO_SEVENTY_DEG),
+                 (8, 35, Angle.TWO_SEVENTY_DEG),
+                 #(6, 20, Angle.TWO_SEVENTY_DEG)
+                 ],
+
+                 [(10, 14, Angle.ZERO_DEG),
+                 (20, 20, Angle.ZERO_DEG),
+                 (10, 30, Angle.ZERO_DEG),
+                 (36, 34, Angle.ONE_EIGHTY_DEG),
+                 (8, 30, Angle.TWO_SEVENTY_DEG)],
                 ]
+
     
-    return obstacles
+    return obstacles[2]
 
 
 def run():
@@ -24,14 +43,18 @@ def run():
 
 def run_tests():
 
-    pt = PlannerTest(num_tests=1e3)
+    pt = PlannerTest(num_tests=3)
     pt.start()
     
-    pt.get_results()
-
-
-#run()
+    results = pt.get_results()
+    print(f"Errors: {results}")
 
 obstacles = get_obstacles()
-paths = solve(obstacles)
-simulate(paths, obstacles, save_gif=True)
+try:
+    paths = solve(obstacles)
+    simulate(paths, obstacles, keep_files=True, save_gif=True)
+    # simulate(paths, obstacles)
+except Exception as e:
+    traceback.print_exc()
+    print(e)
+    save_arena_img(obstacles)
