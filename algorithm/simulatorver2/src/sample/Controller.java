@@ -1,21 +1,23 @@
-package mdp;
-import javafx.animation.PathTransition;
+package sample;
+import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 
 
 public class Controller {
     @FXML
-    private Group robot;
-    @FXML
-    private Polygon direction;
+    private ImageView robot;
+//    @FXML
+//    private Polygon direction;
     @FXML
     private Button forward;
     @FXML
@@ -56,6 +58,7 @@ public class Controller {
 
 
     public void left(ActionEvent e) {
+
         double startAngle = 0.0f;
         double centerX = 0;
         double centerY = 0;
@@ -99,9 +102,9 @@ public class Controller {
         transition.setDuration(Duration.seconds(3));
         transition.setPath(arc);
         transition.setAutoReverse(false);
+        transition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         transition.play();
 
-        direction.setRotate(direction.getRotate()-90);
 
         printLocation();
         System.out.println(robot_direction);
@@ -155,19 +158,41 @@ public class Controller {
         transition.setPath(arc);
         transition.setAutoReverse(false);
 
-//        transition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        transition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         transition.play();
 
-//        RotateTransition rt = new RotateTransition(Duration.seconds(3), direction);
-//        rt.setByAngle(90);
-//        rt.play();
-        direction.setRotate(direction.getRotate()+90);
 
 
-
-//
         printLocation();
         System.out.println(robot_direction);
+
+
+    }
+
+    public void path(ActionEvent e) {
+        Interface inter = new Interface();
+        ArrayList<double[]> route = inter.getPath();
+
+        Timeline timeline = new Timeline();
+
+
+
+
+
+        var i = 0;
+        for (double[] c: route) {
+//            LineTo line = new LineTo(c[0], c[1]);
+            KeyValue kv = new KeyValue(robot.rotateProperty(), c[2]);
+            KeyValue kv2 = new KeyValue(robot.translateXProperty(), c[0]-20.0);
+            KeyValue kv3 = new KeyValue(robot.translateYProperty(), c[1]+20);
+            KeyFrame kf = new KeyFrame(Duration.millis(i), kv, kv2,kv3);
+            timeline.getKeyFrames().add(kf);
+            i += 100;
+        }
+        timeline.play();
+
+
+
 
 
     }
