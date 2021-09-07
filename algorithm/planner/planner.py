@@ -1,12 +1,37 @@
-from HybridAstarPlanner.solver import save_arena_img, solve, simulate, save_arena_img
+from HybridAstarPlanner.solver import solve
 from HybridAstarPlanner.utils import Angle
-from test.planner_test import PlannerTest
 
-import traceback
+class Planner:
+    
+    def __init__(self):
+        self.job_id = 0
+        self.obstacles = None
+        self.cache = {} # store previous results
 
+    def set_obstacles(self, obstacles):
+        self.obstacles = obstacles
+    
+    def run_job(self):
+        if self.obstacles == None:
+            raise Exception("Obstacles not defined")
+        else:
+            try:
+                paths = solve(self.obstacles)
+            except Exception as e:
+                print(f"Job {self.job_id} has no results.")
+                paths = None
+            finally:
+                self.cache[self.job_id] = paths
+
+            self.job_id += 1    
+
+    def get_job(self, job_id):
+        return self.cache[job_id]
+    
+
+
+# for short testing (not used in production)
 def get_obstacles():
-    import random
-    i = random.randint(0,2)
     obstacles = [[(10, 14, Angle.TWO_SEVENTY_DEG),
                  (20, 20, Angle.ONE_EIGHTY_DEG),
                  (30, 30, Angle.ONE_EIGHTY_DEG),
@@ -30,31 +55,3 @@ def get_obstacles():
 
     
     return obstacles[2]
-
-
-def run():
-    obstacles = get_obstacles()
-
-    try:
-        paths = solve(obstacles)
-        print(paths[0].x)
-    except Exception as e:
-        print(e)
-
-def run_tests():
-
-    pt = PlannerTest(num_tests=3)
-    pt.start()
-    
-    results = pt.get_results()
-    print(f"Errors: {results}")
-
-obstacles = get_obstacles()
-try:
-    paths = solve(obstacles)
-    simulate(paths, obstacles, keep_files=True, save_gif=True)
-    # simulate(paths, obstacles)
-except Exception as e:
-    traceback.print_exc()
-    print(e)
-    save_arena_img(obstacles)

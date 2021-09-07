@@ -12,7 +12,7 @@ from itertools import permutations
 from .hybrid_astar import hybrid_astar_planning
 
 
-
+# Draw the car on the plt simulator
 def draw_car(x, y, yaw, steer, color='black'):
     car = np.array([[-C.RB, -C.RB, C.RF, C.RF, -C.RB, C.ACTUAL_RF, C.ACTUAL_RF, -C.ACTUAL_RB, -C.ACTUAL_RB],
                     [C.W / 2, -C.W / 2, -C.W / 2, C.W / 2, C.W / 2, C.W/2, -C.W/2, -C.W/2, C.W/2]])
@@ -60,6 +60,10 @@ def draw_car(x, y, yaw, steer, color='black'):
     Arrow(x, y, yaw, C.WB * 0.8, color)
 
 
+# The obstacles are defined using lists of values (ox - list of x-coordinates, etc)
+
+# Helper func: Add obstacle bot-left, top-right corners and face to the obstacle coors (ox, oy, ...)
+# Passes the return lists as parameters to avoid copying
 def add_obstacles(x1, y1, x2, y2, face, ox, oy, ox_face, oy_face):
 
     # SOUTH FACE
@@ -99,7 +103,8 @@ def add_obstacles(x1, y1, x2, y2, face, ox, oy, ox_face, oy_face):
             ox_face.append(x1)
             oy_face.append(i)
     
-
+# Helper func: Define the bounding box for the arena as a huge rectangular obstacle
+# Passes the return lists as parameters to avoid copying
 def draw_arena_box(x, y, ox, oy):
     for i in range(x):
         ox.append(i)
@@ -115,6 +120,8 @@ def draw_arena_box(x, y, ox, oy):
         oy.append(i)
 
 
+# Adds the arena + obstacles
+# Returns their coordinates lists
 def design_obstacles(x, y, obstacles):
     ox, oy = [], []
     ox_face, oy_face = [], [] # for showing obstacle face
@@ -132,7 +139,8 @@ def design_obstacles(x, y, obstacles):
 
     return ox, oy, ox_face, oy_face
 
-
+# Given the obstacles, set the car's position in front of the obstacles as waypoints
+# Then, these waypoints are treated as nodes of the path graph
 def generate_waypoints(start_pos, obstacles):
     waypoints = {0: start_pos}
     i = 1
@@ -166,6 +174,7 @@ def generate_waypoints(start_pos, obstacles):
     return waypoints
 
 
+# Given the path, returns its distance
 def find_path_distance(ox, oy):
     length = len(ox)
     path_distance = 0
@@ -178,6 +187,8 @@ def find_path_distance(ox, oy):
     return path_distance
 
 
+# Returns the distance vector for the arena waypoints (including start position)
+# This is used to find the Hamiltonian path
 def get_dist_bet_waypoints(waypoint_dict, ox, oy):
     waypoint_labels = list(waypoint_dict.keys())
     num_nodes = len(waypoint_labels)
@@ -218,6 +229,9 @@ def get_dist_of_path(path, dist_vector):
     return dist
 
 
+# Since there are only 6 waypoints (inc start position),
+# we can use brute-force to find the Hamiltonian path
+# For n > 10, we need to implement a polynomial approximation algorithm instead
 def get_shortest_tour(waypoint_dict, dist_vector):
     node_lbl = list(waypoint_dict.keys())
     node_lbl.remove(0) # 0 is source
@@ -248,6 +262,8 @@ def get_shortest_tour(waypoint_dict, dist_vector):
     return waypoints
 
 
+# Given the obstacles, returns list of paths (from point A to B to C to ...) (a Hamiltonian path)
+# The parameters of the car (inc start position) are defined in utils.C
 def solve(obstacles):
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
     waypoint_dict = generate_waypoints(C.CAR_START_POS, obstacles)
@@ -283,11 +299,18 @@ def solve(obstacles):
     return paths
 
 
-def simulate(list_of_paths, obstacles, no_gui=False, save_gif=False, gif_name="./gif/mygif.gif", keep_files=False):
-    print("Simulation started")
-    start_time = time.time()
+# Given the paths and the obstacles (arena + car start pos is defined in utils),
+# either show plt simulation or save as gif
+def simulate(list_of_paths, obstacles, 
+             save_gif=False, gif_name=None):
+
+    if gif_name == None:
+        gif_name = hash(time.time()/1000)
 
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
+
+    print("Simulation started")
+    start_time = time.time()
 
     x = []
     y = []
@@ -348,7 +371,7 @@ def simulate(list_of_paths, obstacles, no_gui=False, save_gif=False, gif_name=".
             plt.pause(0.0001)
         
 
-    if not no_gui:
+    if not save_gif:
         plt.show()
 
     with imageio.get_writer(gif_name, mode='I') as writer:
@@ -357,21 +380,25 @@ def simulate(list_of_paths, obstacles, no_gui=False, save_gif=False, gif_name=".
             writer.append_data(image)
         
     # Remove files
-    if not keep_files:
-        for filename in set(filenames):
-            os.remove(filename)
+    for filename in filenames:
+        os.remove(filename)
 
     end_time = time.time()
     print(f"Done! Took {end_time-start_time} seconds")
 
 
-def save_arena_img(obstacles, id=0):
+# Save the arena image
+# Used when there is no path found (error), and we want to see which obstacle combinations lead to this error
+def save_arena_img(obstacles, id=None):
+    if id == None:
+        id = time.time()
+
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
     plt.plot(ox, oy, "sk")
     plt.plot(ox_face, oy_face, "sy")
     p1, p2, p3 = [0,12], [12,12], [12,0]
     plt.plot(p1, p2, p2, p3)
-    plt.title("Hybrid A*")
+    plt.title("Path not found")
     plt.axis("equal")
     plt.grid(b=True)
 
