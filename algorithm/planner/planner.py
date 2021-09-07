@@ -55,3 +55,12 @@ def get_obstacles():
 
     
     return obstacles[2]
+
+# Example
+p = Planner()
+obs = get_obstacles()
+p.set_obstacles(obs)
+p.run_job()
+
+from HybridAstarPlanner.solver import simulate
+simulate(p.get_job(0), obs, save_gif=True)

@@ -36,7 +36,7 @@ class C:  # Parameter config
     WB = 3.0  # [m] Wheel base
     TR = 0.4  # [m] Tyre radius
     TW = 0.4  # [m] Tyre width
-    MAX_STEER = 0.65  # [rad] maximum steering angle
+    MAX_STEER = 0.785  # [rad] maximum steering angle
 
     #CAR_START_POS = (30.0, 27.5, Angle.NINETY_DEG) 
     CAR_START_POS = (6.0, 3.0, Angle.NINETY_DEG)

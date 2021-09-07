@@ -201,7 +201,6 @@ def get_dist_bet_waypoints(waypoint_dict, ox, oy):
 
             sx, sy, syaw0 = waypoint_dict[src_lbl]
             gx, gy, gyaw0 = waypoint_dict[dest_lbl]
-            print(sx, sy, gx, gy)
             path = hybrid_astar_planning(sx, sy, syaw0, gx, gy, gyaw0,
                                     ox, oy, C.XY_RESO, C.YAW_RESO)
 
@@ -302,10 +301,10 @@ def solve(obstacles):
 # Given the paths and the obstacles (arena + car start pos is defined in utils),
 # either show plt simulation or save as gif
 def simulate(list_of_paths, obstacles, 
-             save_gif=False, gif_name=None):
+             save_gif=False, gif_name=None, keep_files=False):
 
     if gif_name == None:
-        gif_name = hash(time.time()/1000)
+        gif_name = "./gif/" + str(hash(time.time()/1000)) + ".gif"
 
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
 
@@ -373,15 +372,16 @@ def simulate(list_of_paths, obstacles,
 
     if not save_gif:
         plt.show()
-
-    with imageio.get_writer(gif_name, mode='I') as writer:
-        for filename in filenames:
-            image = imageio.imread(filename)
-            writer.append_data(image)
-        
-    # Remove files
-    for filename in filenames:
-        os.remove(filename)
+    else:
+        with imageio.get_writer(gif_name, mode='I') as writer:
+            for filename in filenames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
+            
+        # Remove files
+        if not keep_files:
+            for filename in filenames:
+                os.remove(filename)
 
     end_time = time.time()
     print(f"Done! Took {end_time-start_time} seconds")
