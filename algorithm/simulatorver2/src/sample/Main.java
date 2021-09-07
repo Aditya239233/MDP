@@ -1,4 +1,4 @@
-package mdp;
+package sample;
 
 import javafx.application.Application;
 
@@ -66,7 +66,7 @@ public class Main extends Application {
 
 
 //        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("simulator.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("sim.fxml"));
         Scene scene = new Scene(root);
         String css = this.getClass().getResource("application.css").toExternalForm();
         scene.getStylesheets().add(css);
@@ -80,6 +80,10 @@ public class Main extends Application {
 
 
         stage.show();
+
+
+        // x, y (left corner) and orientation (angle)
+
 
 
 
