@@ -1,5 +1,6 @@
 from HybridAstarPlanner.solver import solve
 from HybridAstarPlanner.utils import Angle
+from test.planner_test import PlannerTest
 
 class Planner:
     
@@ -31,36 +32,45 @@ class Planner:
 
 
 # for short testing (not used in production)
-def get_obstacles():
-    obstacles = [[(10, 14, Angle.TWO_SEVENTY_DEG),
-                 (20, 20, Angle.ONE_EIGHTY_DEG),
-                 (30, 30, Angle.ONE_EIGHTY_DEG),
-                 (36, 34, Angle.TWO_SEVENTY_DEG),
-                 (8, 30, Angle.TWO_SEVENTY_DEG)],
+#obstacles = [[(10, 14, Angle.TWO_SEVENTY_DEG),
+                #  (20, 20, Angle.ONE_EIGHTY_DEG),
+                #  (30, 30, Angle.ONE_EIGHTY_DEG),
+                #  (36, 34, Angle.TWO_SEVENTY_DEG),
+                #  (8, 30, Angle.TWO_SEVENTY_DEG)],
 
-                [(35, 14, Angle.ONE_EIGHTY_DEG),
-                 (20, 25, Angle.ONE_EIGHTY_DEG),
-                 (30, 34, Angle.TWO_SEVENTY_DEG),
-                 (36, 34, Angle.TWO_SEVENTY_DEG),
-                 (8, 35, Angle.TWO_SEVENTY_DEG),
-                 #(6, 20, Angle.TWO_SEVENTY_DEG)
-                 ],
+                # [(35, 14, Angle.ONE_EIGHTY_DEG),
+                #  (20, 25, Angle.ONE_EIGHTY_DEG),
+                #  (30, 34, Angle.TWO_SEVENTY_DEG),
+                #  (36, 34, Angle.TWO_SEVENTY_DEG),
+                #  (8, 35, Angle.TWO_SEVENTY_DEG),
+                #  #(6, 20, Angle.TWO_SEVENTY_DEG)
+                #  ],
 
-                 [(10, 14, Angle.ZERO_DEG),
-                 (20, 20, Angle.ZERO_DEG),
-                 (10, 30, Angle.ZERO_DEG),
-                 (36, 34, Angle.ONE_EIGHTY_DEG),
-                 (8, 30, Angle.TWO_SEVENTY_DEG)],
-                ]
+                #  [(10, 14, Angle.ZERO_DEG),
+                #  (20, 20, Angle.ZERO_DEG),
+                #  (10, 30, Angle.ZERO_DEG),
+                #  (36, 34, Angle.ONE_EIGHTY_DEG),
+                #  (8, 30, Angle.TWO_SEVENTY_DEG)],
+                # ]
 
-    
-    return obstacles[2]
+obstacle = [(32, 31, Angle.TWO_SEVENTY_DEG),
+(17, 15, Angle.ONE_EIGHTY_DEG),
+(9, 33, Angle.ZERO_DEG),
+(17, 24, Angle.ZERO_DEG),
+(28, 21, Angle.TWO_SEVENTY_DEG)]
 
 # Example
-p = Planner()
-obs = get_obstacles()
-p.set_obstacles(obs)
-p.run_job()
+# p = Planner()
+# obs = get_obstacles()
+# p.set_obstacles(obs)
+# p.run_job()
 
-from HybridAstarPlanner.solver import simulate
-simulate(p.get_job(0), obs, save_gif=True)
+# from HybridAstarPlanner.solver import simulate
+# simulate(p.get_job(0), obs, save_gif=True)
+
+
+
+# Test Example
+pt = PlannerTest(num_tests=2)
+pt.start()
+# pt.test_custom(obstacle)

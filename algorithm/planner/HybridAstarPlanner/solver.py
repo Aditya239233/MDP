@@ -6,7 +6,8 @@ import os
 import time
 import CurvesGenerator.reeds_shepp as rs
 
-from .utils import C, Angle
+
+from .utils import C, Angle, increment_id
 from .draw import Arrow
 from itertools import permutations
 from .hybrid_astar import hybrid_astar_planning
@@ -201,12 +202,12 @@ def get_dist_bet_waypoints(waypoint_dict, ox, oy):
 
             sx, sy, syaw0 = waypoint_dict[src_lbl]
             gx, gy, gyaw0 = waypoint_dict[dest_lbl]
-            path = hybrid_astar_planning(sx, sy, syaw0, gx, gy, gyaw0,
-                                    ox, oy, C.XY_RESO, C.YAW_RESO)
+
+            path = hybrid_astar_planning(sx, sy, syaw0, gx, gy, gyaw0, ox, oy, C.XY_RESO, C.YAW_RESO)
 
             if path == None:
                 print(f"Finding dist bet. waypoints: Path is not found for\n {sx}, {sy}, {gx}, {gy}")
-                dist = 9999
+                dist = -1
             else:
                 dist = find_path_distance(path.x, path.y)
 
@@ -217,15 +218,21 @@ def get_dist_bet_waypoints(waypoint_dict, ox, oy):
     return dist_vector
 
 
-def get_dist_of_path(path, dist_vector):
-    dist = 0
+def get_dist_of_tour(path, dist_vector):
+    total_dist = 0
 
     for i in range(len(path)-1):
         src = path[i]
         dest = path[i+1]
-        dist += dist_vector[src][dest]
+
+        path_dist = dist_vector[src][dest]
+
+        if path_dist != -1:
+            total_dist += path_dist
+        else: # path does not exist
+            total_dist += math.inf
     
-    return dist
+    return total_dist
 
 
 # Since there are only 6 waypoints (inc start position),
@@ -236,16 +243,19 @@ def get_shortest_tour(waypoint_dict, dist_vector):
     node_lbl.remove(0) # 0 is source
 
     all_permutations = permutations(node_lbl)
-    min_path = []
+    min_tour = []
     min_dist = math.inf
 
     # brute force all possible paths
     for arr in all_permutations:
-        path = [0]
-        path.extend(arr)
-        dist = get_dist_of_path(path, dist_vector)
+        tour = [0]
+        tour.extend(arr)
+        dist = get_dist_of_tour(tour, dist_vector)
+
+        # if any path in the tour does not exist, then the dist will be >= inf
+        # and the following if statement will not be executed
         if dist < min_dist:
-            min_path = path
+            min_tour = tour
             min_dist = dist
         
     #     print(f"{path}: {dist}")
@@ -255,7 +265,7 @@ def get_shortest_tour(waypoint_dict, dist_vector):
 
     # get the path in terms of waypoints (currently it is still in labels)
     waypoints = []
-    for node in min_path:
+    for node in min_tour:
         waypoints.append(waypoint_dict[node])
 
     return waypoints
@@ -269,15 +279,17 @@ def solve(obstacles):
 
     try:
         dist_vector = get_dist_bet_waypoints(waypoint_dict, ox, oy)
+        print("Distance vector found")
     except Exception as e:
-        plt.plot(ox, oy, "sk")
-        plt.plot(ox_face, oy_face, "sy")
-        draw_car(3.0, 3.0, Angle.NINETY_DEG, 0)
-        plt.grid(b=True)
-        plt.show()
         raise
 
     tour = get_shortest_tour(waypoint_dict, dist_vector)
+
+    # if no waypoints == no valid tour found
+    if len(tour) == 0:
+        raise Exception("No tour found")
+    else:
+        print("Shortest tour found")
     
 
     # Given a list of ordered waypoints, find the route
@@ -291,10 +303,11 @@ def solve(obstacles):
                                  ox, oy, C.XY_RESO, C.YAW_RESO)
 
         if not path:
-            raise Exception(f"{tour[i]} and {tour[i+1]} don't have a path!")
+            raise Exception(f"{tour[i]} and {tour[i+1]} don't have a path!") # Should this ever be reached?
 
         paths.append(path)
 
+    print("Tour returned")
     return paths
 
 
@@ -304,7 +317,8 @@ def simulate(list_of_paths, obstacles,
              save_gif=False, gif_name=None, keep_files=False):
 
     if gif_name == None:
-        gif_name = "./gif/" + str(hash(time.time()/1000)) + ".gif"
+        id = increment_id("gif")
+        gif_name = f"./results/gif/{id}.gif"
 
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
 
@@ -345,7 +359,7 @@ def simulate(list_of_paths, obstacles,
         plt.plot(ox_face, oy_face, "sy")
 
         # Plot carpark
-        p1, p2, p3 = [0,12], [12,12], [12,0]
+        p1, p2, p3 = [0,6], [6,6], [6,0]
         plt.plot(p1, p2, p2, p3)
 
         plt.plot(x, y, linewidth=1.5, color='r')
@@ -362,7 +376,7 @@ def simulate(list_of_paths, obstacles,
         plt.grid(b=True)
 
         if save_gif:
-            filename = f"./gif/{k}.png"
+            filename = f"./results/temp/{k}.png"
             filenames.append(filename)
             plt.savefig(filename)
             plt.close()
@@ -386,22 +400,46 @@ def simulate(list_of_paths, obstacles,
     end_time = time.time()
     print(f"Done! Took {end_time-start_time} seconds")
 
+def save_valid_obstacles(obstacles, id):
+    with open("./results/valid_arena/arena.txt", "a") as f:
+        s = []
+        for obs in obstacles:
+            face = obs[2]
+
+            if face == Angle.ZERO_DEG:
+                face = "Angle.ZERO_DEG"
+            elif face == Angle.NINETY_DEG:
+                face = "Angle.NINETY_DEG"
+            elif face == Angle.ONE_EIGHTY_DEG:
+                face = "Angle.ONE_EIGHTY_DEG"
+            elif face == Angle.TWO_SEVENTY_DEG:
+                face = "Angle.TWO_SEVENTY_DEG"
+            s.append(f"({obs[0]}, {obs[1]}, {face})")
+        
+        f.write(f"{id}\n")
+        f.write(",\n".join(s))
+        f.write("\n\n")
 
 # Save the arena image
 # Used when there is no path found (error), and we want to see which obstacle combinations lead to this error
-def save_arena_img(obstacles, id=None):
-    if id == None:
-        id = time.time()
+def save_arena_img(obstacles, error=False):
 
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
     plt.plot(ox, oy, "sk")
     plt.plot(ox_face, oy_face, "sy")
-    p1, p2, p3 = [0,12], [12,12], [12,0]
+    p1, p2, p3 = [0,6], [6,6], [6,0]
     plt.plot(p1, p2, p2, p3)
     plt.title("Path not found")
     plt.axis("equal")
     plt.grid(b=True)
 
-    filename = f"./error_arena/{id}.png"
+    if error:
+        id = increment_id("error")
+        filename = f"./results/error_arena/{id}.png"
+    else:
+        id = increment_id("valid")
+        save_valid_obstacles(obstacles, id)
+        filename = f"./results/valid_arena/{id}.png"
+
     plt.savefig(filename)
     plt.close()

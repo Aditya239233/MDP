@@ -39,8 +39,28 @@ class C:  # Parameter config
     MAX_STEER = 0.785  # [rad] maximum steering angle
 
     #CAR_START_POS = (30.0, 27.5, Angle.NINETY_DEG) 
-    CAR_START_POS = (6.0, 3.0, Angle.NINETY_DEG)
+    CAR_START_POS = (3.0, 3.0, Angle.NINETY_DEG)
     ACTUAL_CAR_LENGTH = 4.0
     X, Y = 40, 40
     OBS_LENGTH = 2
     TOL_SPACE = 4 + ACTUAL_CAR_LENGTH/2  # camera space
+
+def increment_id(tag):
+    if tag == "error":
+        filename = "errorarena"
+    elif tag == "valid":
+        filename = "validarena"
+    elif tag == "gif":
+        filename = "gif"
+
+
+    file = open(f"./results/id/{filename}.txt","r")
+    id_line = file.readline()
+    file.close()
+
+    curr_id = int(id_line.strip())
+    file = open(f"./results/id/{filename}.txt","w")
+    file.write(f"{curr_id+1}")
+    file.close()
+    
+    return curr_id

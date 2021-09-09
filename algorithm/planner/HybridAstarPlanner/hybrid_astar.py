@@ -126,7 +126,8 @@ def hybrid_astar_planning(sx, sy, syaw, gx, gy, gyaw, ox, oy, xyreso, yawreso):
                     open_set[node_ind] = node
                     qp.put(node_ind, calc_hybrid_cost(node, hmap, P))
 
-    return extract_path(closed_set, fnode, nstart)
+    path = extract_path(closed_set, fnode, nstart)
+    return path
 
 
 def extract_path(closed, ngoal, nstart):
