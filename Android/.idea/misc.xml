@@ -6,12 +6,20 @@
         <entry key="..\:/Users/cywk/Desktop/mdp android/MDP/Android/app/src/main/res/layout/home.xml" value="0.26953125" />
         <entry key="..\:/Users/cywk/Desktop/mdp android/MDP/Android/app/src/main/res/layout/interactive_control_layout.xml" value="0.5" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.228125" />
+        <entry key="app/src/main/res/drawable-xhdpi/border_white_background.xml" value="0.4197916666666667" />
+        <entry key="app/src/main/res/drawable-xhdpi/rounded_corner.xml" value="0.4197916666666667" />
+        <entry key="app/src/main/res/drawable-xxxhdpi/border_black_background.xml" value="0.4197916666666667" />
+        <entry key="app/src/main/res/drawable/border_white_background.xml" value="0.24635416666666668" />
+        <entry key="app/src/main/res/drawable/empty_box.xml" value="0.4197916666666667" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.228125" />
+        <entry key="app/src/main/res/drawable/shape.xml" value="0.4197916666666667" />
         <entry key="app/src/main/res/layout/activity_interactive_control.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/arena_map.xml" value="0.23020833333333332" />
         <entry key="app/src/main/res/layout/bluetooth.xml" value="0.26131120405373587" />
-        <entry key="app/src/main/res/layout/bluetooth_home.xml" value="0.10068533662869839" />
+        <entry key="app/src/main/res/layout/bluetooth_home.xml" value="0.39949970256687956" />
+        <entry key="app/src/main/res/layout/bluetooth_pop_up_window.xml" value="0.23020833333333332" />
+        <entry key="app/src/main/res/layout/card_item.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/home.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/layout/interactive_control_layout.xml" value="0.22552083333333334" />
         <entry key="app/src/main/res/layout/interactive_layout.xml" value="0.23958333333333334" />

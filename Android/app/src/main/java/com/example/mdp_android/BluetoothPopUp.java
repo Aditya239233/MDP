@@ -231,8 +231,6 @@ public class BluetoothPopUp extends AppCompatActivity {
         });
 
 
-        ImageButton backBtn = findViewById(R.id.backBtn);
-
         connStatusTextView = (TextView) findViewById(R.id.connStatusTextView);
         connStatus ="Disconnected";
         sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
@@ -241,15 +239,6 @@ public class BluetoothPopUp extends AppCompatActivity {
 
         connStatusTextView.setText(connStatus);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor = sharedPreferences.edit();
-                editor.putString("connStatus", connStatusTextView.getText().toString());
-                editor.commit();
-//                finish();
-            }
-        });
 
         myDialog = new ProgressDialog(BluetoothPopUp.this);
         myDialog.setMessage("Waiting for other device to reconnect...");

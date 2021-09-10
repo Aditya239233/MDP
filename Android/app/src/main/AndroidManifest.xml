@@ -26,12 +26,16 @@
             android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".arena_map"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".interactive_control"
             android:exported="true"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".BluetoothPopUp" />
+        <activity
+            android:name=".BluetoothPopUp"
+            android:exported="true"
+            android:parentActivityName=".bluetooth_home"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
