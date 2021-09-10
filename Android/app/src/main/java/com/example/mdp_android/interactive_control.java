@@ -27,10 +27,12 @@ public class interactive_control extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.interactive_control_layout);
-        Button north_button = findViewById(R.id.button4);
-        Button south_button = findViewById(R.id.button5);
-        Button west_button = findViewById(R.id.button6);
-        Button east_button = findViewById(R.id.button7);
+        Button foward_button = findViewById(R.id.button4);
+        Button reverse_button = findViewById(R.id.button5);
+        Button left_button = findViewById(R.id.button6);
+        Button right_button = findViewById(R.id.button7);
+        Button rotate_left_button = findViewById(R.id.button9);
+        Button rotate_right_button = findViewById(R.id.button8);
         TextView showReceived = findViewById(R.id.showReceived);
         BroadcastReceiver messageReceiver = new BroadcastReceiver() {
             @Override
@@ -40,7 +42,7 @@ public class interactive_control extends AppCompatActivity {
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
-        north_button.setOnClickListener(new View.OnClickListener() {
+        foward_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String message = "f";
@@ -51,7 +53,7 @@ public class interactive_control extends AppCompatActivity {
             }
         });
 
-        south_button.setOnClickListener(new View.OnClickListener() {
+        reverse_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String message = "r";
@@ -62,7 +64,7 @@ public class interactive_control extends AppCompatActivity {
             }
         });
 
-        west_button.setOnClickListener(new View.OnClickListener() {
+        left_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String message = "sl";
@@ -73,7 +75,7 @@ public class interactive_control extends AppCompatActivity {
             }
         });
 
-        east_button.setOnClickListener(new View.OnClickListener() {
+        right_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String message = "sr";
@@ -83,10 +85,32 @@ public class interactive_control extends AppCompatActivity {
                 }
             }
         });
-//        east_button.setTag("east_button");
+
+        rotate_left_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = "tl";
+                if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+                    byte[] bytes = message.getBytes(Charset.defaultCharset());
+                    BluetoothConnectionService.write(bytes);
+                }
+            }
+        });
+
+        rotate_right_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = "tr";
+                if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+                    byte[] bytes = message.getBytes(Charset.defaultCharset());
+                    BluetoothConnectionService.write(bytes);
+                }
+            }
+        });
+//        right_button.setTag("right_button");
 //        // Sets a long click listener for the ImageView using an anonymous listener object that
 //// implements the OnLongClickListener interface
-//        east_button.setOnLongClickListener(new View.OnLongClickListener() {
+//        right_button.setOnLongClickListener(new View.OnLongClickListener() {
 //
 //            // Defines the one method for the interface, which is called when the View is long-clicked
 //            public boolean onLongClick(View v) {
@@ -107,7 +131,7 @@ public class interactive_control extends AppCompatActivity {
 //                        item);
 //
 //                // Instantiates the drag shadow builder.
-//                View.DragShadowBuilder myShadow = new MyDragShadowBuilder(east_button);
+//                View.DragShadowBuilder myShadow = new MyDragShadowBuilder(right_button);
 //
 //                // Starts the drag
 //
