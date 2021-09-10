@@ -10,7 +10,7 @@
         android:id="@+id/myimage1"
         android:layout_width="41.3dp"
         android:layout_height="41.3dp"
-        android:src="@drawable/border_white_background"
+        android:src="@drawable/obstacle_image"
         app:layout_constraintBottom_toTopOf="@+id/idGrid"
         app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"

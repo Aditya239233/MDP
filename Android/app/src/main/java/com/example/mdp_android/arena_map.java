@@ -2,26 +2,35 @@ package com.example.mdp_android;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.ViewGroup;
 import android.widget.GridView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
+
 import android.content.ClipData;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class arena_map extends AppCompatActivity {
 
     GridView arena;
+    private static final String TAG = "I'm being called!";
+    private GestureDetector gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.arena_map);
+        gestureDetector = new GestureDetector(this, new SingleTapConfirm());
 
         // Define Arena
         arena = findViewById(R.id.idGrid);
@@ -29,28 +38,50 @@ public class arena_map extends AppCompatActivity {
 
         ArrayList<Arena> courseModelArrayList = new ArrayList<Arena>();
 
-        for (int i=0; i<100; i++)
+        for (int i = 0; i < 100; i++)
             courseModelArrayList.add(new Arena(R.drawable.border_black_background));
 
         ArenaAdapter adapter = new ArenaAdapter(this, courseModelArrayList);
         arena.setAdapter(adapter);
 
         // Define Block
-        findViewById(R.id.myimage1).setOnTouchListener(new MyTouchListener());
-    }
+        ImageView obstacle = findViewById(R.id.myimage1);
+        obstacle.setOnTouchListener(new MyTouchListener());
+        obstacle.setOnLongClickListener(new View.OnLongClickListener() {
 
-    private final class MyTouchListener implements OnTouchListener {
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            @Override
+            public boolean onLongClick(View view) {
                 ClipData data = ClipData.newPlainText("", "");
                 DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
                         view);
                 view.startDrag(data, shadowBuilder, view, 0);
-//                view.setVisibility(View.INVISIBLE);
                 return true;
-            } else {
+            }
+        });
+    }
+
+    private final class MyTouchListener implements OnTouchListener {
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (gestureDetector.onTouchEvent(motionEvent)) {
+                view.setRotation(view.getRotation() + 90);
+                Log.d(TAG, "rotation : " + view.getRotation());
                 return false;
             }
+//            else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+//                ClipData data = ClipData.newPlainText("", "");
+//                DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
+//                        view);
+//                view.startDrag(data, shadowBuilder, view, 0);
+//                return true;
+//            }
+            return false;
+        }
+    }
+
+    private class SingleTapConfirm extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapUp(MotionEvent event) {
+            return true;
         }
     }
 
