@@ -268,7 +268,7 @@
                 <Rectangle fill="#a2bcec" height="20.0" layoutX="10.0" layoutY="10.0" stroke="TRANSPARENT" strokeType="INSIDE" width="20.0" GridPane.columnIndex="19" GridPane.rowIndex="19" />
             </children>
         </GridPane>
-        <AnchorPane layoutX="14.0" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0">
+        <AnchorPane fx:id="pane" layoutX="14.0" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0">
             <children>
                 <ImageView fx:id="robot" fitHeight="150.0" fitWidth="40.0" layoutY="360.0" pickOnBounds="true" preserveRatio="true" rotate="-90.0">
                     <image>
@@ -277,6 +277,6 @@
                 </ImageView>
             </children>
         </AnchorPane>
-      <Button layoutX="483.0" layoutY="160.0" mnemonicParsing="false" onAction="#path" text="Play Path" />
+        <Button layoutX="483.0" layoutY="160.0" mnemonicParsing="false" onAction="#path" text="Play Path" />
     </children>
 </AnchorPane>

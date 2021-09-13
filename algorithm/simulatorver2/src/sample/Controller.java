@@ -6,17 +6,20 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
 public class Controller {
     @FXML
     private ImageView robot;
-//    @FXML
+    //    @FXML
 //    private Polygon direction;
     @FXML
     private Button forward;
@@ -27,6 +30,9 @@ public class Controller {
     @FXML
     private GridPane grid;
 
+    @FXML
+    private AnchorPane pane;
+
     private String robot_direction = "N";
 
 
@@ -35,6 +41,8 @@ public class Controller {
         System.out.println(robot.getTranslateX());
         System.out.println(robot.getTranslateY());
     }
+
+
 
     public void straight(ActionEvent e) {
 
@@ -105,6 +113,7 @@ public class Controller {
         transition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         transition.play();
 
+//        direction.setRotate(direction.getRotate()-90);
 
         printLocation();
         System.out.println(robot_direction);
@@ -161,8 +170,12 @@ public class Controller {
         transition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         transition.play();
 
+//        RotateTransition rt = new RotateTransition(Duration.seconds(3), direction);
+//        rt.setByAngle(90);
+//        rt.play();
+//        direction.setRotate(direction.getRotate()+90);
 
-
+//
         printLocation();
         System.out.println(robot_direction);
 
@@ -170,27 +183,78 @@ public class Controller {
     }
 
     public void path(ActionEvent e) {
-        Interface inter = new Interface();
-        ArrayList<double[]> route = inter.getPath();
+        ApiInterface inter = new ApiInterface();
+        ArrayList<ArrayList<Double>> route = inter.getPath();
+
+        Path path = new Path();
+        path.setStroke(Color.RED);
+        path.setStrokeWidth(1.0);
+
+        MoveTo moveTo = new MoveTo();
+        moveTo.setX(route.get(0).get(0) *10 -20.0);
+        moveTo.setY(route.get(0).get(1) *-10 +20);
+        path.getElements().add(moveTo);
+        path.setLayoutX(20);
+        path.setLayoutY(380);
+
+
+
+
+
+
+
+
 
         Timeline timeline = new Timeline();
 
-
-
-
-
         var i = 0;
-        for (double[] c: route) {
+        for (ArrayList<Double> c: route) {
+
+            if (c.get(0) == -1) {
+                i += 300;
+                continue;
+            }
+
+            double x = c.get(0) *10 -20;
+            double y = c.get(1) *-10 +20;
+
+
+            LineTo lineTo = new LineTo();
+            lineTo.setX(x);
+            lineTo.setY(y);
+            path.getElements().add(lineTo);
+
 //            LineTo line = new LineTo(c[0], c[1]);
-            KeyValue kv = new KeyValue(robot.rotateProperty(), c[2]);
-            KeyValue kv2 = new KeyValue(robot.translateXProperty(), c[0]-20.0);
-            KeyValue kv3 = new KeyValue(robot.translateYProperty(), c[1]+20);
+            double rotate = c.get(2) * (180/Math.PI) * -1;
+            System.out.println(rotate);
+            if (rotate >= 0) {
+                rotate = rotate -360;
+            }
+            KeyValue kv = new KeyValue(robot.rotateProperty(), rotate );
+            KeyValue kv2 = new KeyValue(robot.translateXProperty(), c.get(0) *10 -20.0);
+            KeyValue kv3 = new KeyValue(robot.translateYProperty(), c.get(1) *-10 +20);
             KeyFrame kf = new KeyFrame(Duration.millis(i), kv, kv2,kv3);
             timeline.getKeyFrames().add(kf);
             i += 100;
+//            path.getElements().add(new LineTo(c[0], c[1]));
+//            robot.setRotate(c[2]);
         }
+        pane.getChildren().add(path);
         timeline.play();
+//        System.out.println(path);
+        PathTransition transition = new PathTransition();
 
+        transition.setDuration(Duration.seconds(10));
+        transition.setNode(forward);
+        transition.setPath(path);
+        transition.setAutoReverse(false);
+
+        transition.play();
+//        printLocation();
+//
+//        RotateTransition rt = new RotateTransition(Duration.seconds(10), robot);
+//        rt.setByAngle(90);
+//        rt.play();
 
 
 

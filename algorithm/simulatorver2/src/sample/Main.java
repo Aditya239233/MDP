@@ -23,7 +23,7 @@ public class Main extends Application {
     }
 
     public void initializeObstacles(GridPane grid) {
-        Interface inter = new Interface();
+        ApiInterface inter = new ApiInterface();
         ArrayList<Map> obstacles = inter.getObstacles();
 
         for (Map obs : obstacles) {
@@ -65,8 +65,8 @@ public class Main extends Application {
         // need to check if need to turn left or right while reversing
 
 
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("sim.fxml"));
+//        Parent root = FXMLLoader.load(getClass().getResource("simulator.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("simulator.fxml"));
         Scene scene = new Scene(root);
         String css = this.getClass().getResource("application.css").toExternalForm();
         scene.getStylesheets().add(css);

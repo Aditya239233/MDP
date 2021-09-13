@@ -10,3 +10,6 @@
     -fx-font-family: "Lucida Console";
 }
 
+.path {
+    -fx-stroke: "black";
+}
