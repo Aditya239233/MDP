@@ -4,9 +4,10 @@ import imageio
 import matplotlib.pyplot as plt
 import os
 import time
+import pickle
 import CurvesGenerator.reeds_shepp as rs
 
-
+from collections import defaultdict
 from .utils import C, Angle, increment_id
 from .draw import Arrow
 from itertools import permutations
@@ -307,13 +308,26 @@ def solve(obstacles):
 
         paths.append(path)
 
+    # calculate steer value
+    for path in paths:
+
+        n = len(path.x)
+        for k in range(n):
+            if k < n - 2:
+                dy = (path.yaw[k + 1] - path.yaw[k]) / C.MOVE_STEP
+                steer = rs.pi_2_pi(math.atan(-C.WB * dy / path.direction[k]))
+            else:
+                steer = 0
+            
+            path.steer.append(steer)
+
     print("Tour returned")
     return paths
 
 
 # Given the paths and the obstacles (arena + car start pos is defined in utils),
 # either show plt simulation or save as gif
-def simulate(list_of_paths, obstacles, 
+def simulate(tour, obstacles, 
              save_gif=False, gif_name=None, keep_files=False):
 
     if gif_name == None:
@@ -330,7 +344,7 @@ def simulate(list_of_paths, obstacles,
     yaw = []
     direction = []
 
-    for path in list_of_paths:
+    for path in tour:
         x.extend(path.x)
         y.extend(path.y)
         yaw.extend(path.yaw)
@@ -443,3 +457,11 @@ def save_arena_img(obstacles, error=False):
 
     plt.savefig(filename)
     plt.close()
+
+    return id
+
+
+def save_tour_to_pickle(paths, id):
+
+    pickle.dump(paths, open(f"./results/valid_paths/tour{id}.pkl", "wb"))
+    print(f"Tour saved as tour{id}.pkl\n")

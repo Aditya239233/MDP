@@ -57,6 +57,7 @@ class Path:
         self.yaw = yaw
         self.direction = direction
         self.cost = cost
+        self.steer = []
 
 
 class QueuePrior:

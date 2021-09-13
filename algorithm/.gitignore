@@ -2,4 +2,5 @@ __pycache__
 out
 *.gif
 *.png
-out.txt
+*.txt
+results

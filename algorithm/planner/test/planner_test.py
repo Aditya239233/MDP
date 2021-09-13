@@ -1,6 +1,6 @@
 from matplotlib.pyplot import draw
 from .obstacle_generator import generate_obstacles
-from HybridAstarPlanner.solver import solve, save_arena_img, simulate
+from HybridAstarPlanner.solver import save_tour_to_pickle, solve, save_arena_img, simulate
 
 class PlannerTest:
 
@@ -37,7 +37,8 @@ class PlannerTest:
     def test_custom(self, obstacles):
         try:
             paths = solve(obstacles)
-            simulate(paths, obstacles, save_gif=True, gif_name="./results/gif/custom.gif")
+            # simulate(paths, obstacles, save_gif=True, gif_name="./results/gif/custom.gif")
+            save_tour_to_pickle(paths, 0)
         except Exception as e:
             print(e)
             save_arena_img(obstacles, error=True)
