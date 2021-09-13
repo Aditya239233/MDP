@@ -39,6 +39,10 @@ class Planner:
         else:
             return None
 
+    def get_job(self, job_id):
+        return self.cache[job_id]
+
+
 obstacle = [(32, 31, Angle.TWO_SEVENTY_DEG),
 (18, 16, Angle.ONE_EIGHTY_DEG),
 (9, 33, Angle.ZERO_DEG),
@@ -52,8 +56,14 @@ job_id = p.run_job()
 intructions = p.get_instructions(job_id)
 print(intructions)
 
+tour = p.get_job(0)
 # from HybridAstarPlanner.solver import simulate
 # simulate(p.get_job(0), obstacle, save_gif=True, gif_name="./results/gif/fourth.gif")
+for path in tour:
+    for i in range(len(path.x)):
+        print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
+
+    print("\n\n")
 
 
 # for short testing (not used in production)
@@ -77,12 +87,6 @@ print(intructions)
                 #  (36, 34, Angle.ONE_EIGHTY_DEG),
                 #  (8, 30, Angle.TWO_SEVENTY_DEG)],
                 # ]
-
-# obstacle = [(32, 31, Angle.TWO_SEVENTY_DEG),
-# (18, 16, Angle.ONE_EIGHTY_DEG),
-# (9, 33, Angle.ZERO_DEG),
-# (17, 24, Angle.ZERO_DEG),
-# (28, 21, Angle.TWO_SEVENTY_DEG)]
 
 
 

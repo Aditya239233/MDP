@@ -4,7 +4,7 @@ from HybridAstarPlanner.hybrid_astar import Path
 from HybridAstarPlanner.utils import Angle, C
 
 SPEED = 0.01 #unit/ms
-ROT_TIME = 2132.676237 #ms/rad
+ROT_TIME = 623.8873769 #ms/rad
 
 # Check the longest sequence for:
 # 1. Rotation - rotation has a different motion from straight-line
@@ -61,10 +61,10 @@ def translate(path, start_x, start_y, first_angle):
 
         prev_angle = path.yaw[i]
 
-        reverse_moving = path.direction[i] < 0
-        sign = 'r' if reverse_moving else 'f'
+        prev_reverse_moving = path.direction[i-1] < 0 if i > 0 else False
+        sign = 'r' if prev_reverse_moving else 'f'
 
-        # check for anomalies in steer (-ve +ve -ve)
+        # check for anomalies in steer (-ve +ve -ve or +ve -ve +ve)
         if i > 0 and i < len(path.x)-1:
             if same_sign(path.steer[i-1], path.steer[i+1]) and not same_sign(path.steer[i], path.steer[i+1]):
                 path.steer[i] *= -1
@@ -83,7 +83,7 @@ def translate(path, start_x, start_y, first_angle):
                 dist = calculate_dist(straight_path)
                 t = dist/SPEED
 
-                if reverse_moving:
+                if prev_reverse_moving:
                     instructions.append(f"s{t :04.0f}")
                 else:
                     instructions.append(f"w{t :04.0f}")
@@ -92,6 +92,7 @@ def translate(path, start_x, start_y, first_angle):
         else:
             # if |steer| > 0 => still turning => update angle of car
             if is_turning(path.steer[i]):
+                straight_path = []
                 end_angle = path.yaw[i]
 
                 # if car is still turning, check if steer direction changed
@@ -102,9 +103,9 @@ def translate(path, start_x, start_y, first_angle):
                     t = int(abs(end_angle-start_angle) * ROT_TIME)
 
                     if left_turning:
-                        print(f"a{sign}{t :04.0f}")
+                        instructions.append(f"a{sign}{t :04.0f}")
                     else:
-                        print(f"d{sign}{t :04.0f}")
+                        instructions.append(f"d{sign}{t :04.0f}")
 
                     start_angle = path.yaw[i]
                     left_turning = curr_left_turning
@@ -140,7 +141,7 @@ def translate(path, start_x, start_y, first_angle):
         t = dist/SPEED
 
         # sometimes if t is very small, we can ignore the last bit of forward/backward motion
-        if t >= 70:
+        if t >= 50:
             if reverse_moving:
                 instructions.append(f"s{t :04.0f}")
             else:
@@ -157,7 +158,6 @@ def translate_tour(tour):
     next_x, next_y, next_angle = C.CAR_START_POS
 
     for path in tour:
-        print(path.steer)
         next_x, next_y, next_angle, instructions = translate(path, next_x, next_y, next_angle)
         instructions.append("C5000")  # car stop and do image recognition
         list_of_instructions.extend(instructions)
