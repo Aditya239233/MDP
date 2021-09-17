@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,16 +32,17 @@ import java.nio.charset.Charset;
  */
 
 public class arena_map extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ARENA MAP";
 
     // Declare Variables
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private static Context context;
-
+    private TextView statusBox;
     private static Arena arenaMap;
     static TextView txtRobotDirection, txtRobotCoord;
     ProgressDialog myDialog;
+
 
 
     @Override
@@ -55,6 +57,8 @@ public class arena_map extends AppCompatActivity {
 
         //sharedPreferences set up
         arena_map.context = getApplicationContext();
+        statusBox = findViewById(R.id.statusBox);
+        statusBox.setMovementMethod(new ScrollingMovementMethod());
         this.sharedPreferences();
         editor.putString("message", "");
         editor.putString("direction","None");
@@ -179,16 +183,54 @@ public class arena_map extends AppCompatActivity {
     BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("theMessage");
-            showLog("Message Received: " + message);
-
+            String message = intent.getStringExtra("receivedMessage");
+            statusBox.append(message+"\n");
+            String[] parts = message.split(",");
+            String type = parts[0];
+            switch(type)
+            {
+                case "TARGET":
+                {
+                    Log.d(TAG,"Interpreting TARGET message");
+                    try {
+                        String obsID = parts[1];
+                        String targetID = parts[2];
+                        // your code here
+                    }catch(Exception e)
+                    {
+                        Log.d(TAG,"Invalid message");
+                        e.printStackTrace();
+                    }
+                }
+                case "ROBOT":
+                {
+                    Log.d(TAG,"Interpreting ROBOT message");
+                    try {
+                        float x = Float.parseFloat(parts[1]);
+                        float y = Float.parseFloat(parts[2]);
+                        String direction = parts[3];
+                        // your code here
+                    }catch(Exception e)
+                    {
+                        Log.d(TAG,"Invalid message");
+                        e.printStackTrace();
+                    }
+                }
+                case "INSTRUCTIONS":
+                {
+                    Log.d(TAG,"Interpreting ROBOT message");
+                    // your code here
+                }
+                default:
+                {
+                    Log.d(TAG,"Invalid format: unable to recognize message type");
+                }
+            }
             arenaMap.updateMap(message);
-
             sharedPreferences();
             String receivedText = sharedPreferences.getString("message", "") + "\n" + message;
             editor.putString("message", receivedText);
             editor.commit();
-
             refreshMessageReceived();
         }
     };

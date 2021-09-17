@@ -92,7 +92,7 @@ public class Obstacle {
                 //Yellow: Down
                 obsFace = "South";
                 break;
-            case 4:
+            case 0:
                 //Blue: Front
                 obsFace = "North";
                 break;

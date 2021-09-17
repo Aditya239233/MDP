@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
 
+import com.example.mdp_android.BluetoothConnectionService;
 import com.example.mdp_android.arena_map;
 import com.example.mdp_android.R;
 
@@ -275,7 +276,8 @@ public class Arena extends View implements Serializable {
                         if (obstacles.getActionDown()) {
                             if (isInArena(coordinates)) {
                                 obstacles.setObsMapCoord(coordinates[0], coordinates[1]);
-
+                                String message = ""+ obstacles.getObsID()+","+  + coordinates[0]+ ","+ coordinates[1];
+                                BluetoothConnectionService.sendMessage(message);
                                 //Direct message to Main Activity
 //                            arena_map.printMessage("ADDOBSTACLE," + obstacles.getObsID() + "," + coordinates[0] + "," + coordinates[1]);
 
@@ -296,9 +298,10 @@ public class Arena extends View implements Serializable {
                 else {
                     for (Obstacle obstacles : obstacleList) {
                         if (obstacles.isTouched(x, y) && !obstacles.getActionDown()) {
-                            Log.d("", "We HEREE");
+                            Log.d("", "We HEREEee");
                             obstacles.setTouchCount(obstacles.getTouchCount()+1);
                             obstacles.setObsFace(obstacles.getTouchCount());
+                            Log.d(TAG,obstacles.getObsFace());
                             paintObsFace(newCanvas);
                         }
                     }
@@ -369,7 +372,7 @@ public class Arena extends View implements Serializable {
             obstacles.drawObj(canvas, obstaclePaint);
 
             canvas.drawText(obstacles.getTargetID(), obstacles.getObsX() + 9, obstacles.getObsY() + 21, obstacleNumberPaint);
-            paintObsFace(canvas);
+//            paintObsFace(canvas);
 
             this.newCanvas = canvas;
         }
@@ -463,6 +466,8 @@ public class Arena extends View implements Serializable {
             //After drawing, set drawing to false
             setRobotPostition = false;
             arena_map.setRobotDetails(x, y, direction);
+            String message = ""+"ROBOT"+","+x+","+ y+","+direction;
+            BluetoothConnectionService.sendMessage(message);
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 public class BluetoothConnectionService {
@@ -40,6 +41,7 @@ public class BluetoothConnectionService {
         this.mContext = context;
         startAcceptThread();
     }
+
 
     private class AcceptThread extends Thread{
         private final BluetoothServerSocket ServerSocket;
@@ -214,5 +216,14 @@ public class BluetoothConnectionService {
 
     public static void write(byte[] out){
         mConnectedThread.write(out);
+    }
+    public static boolean sendMessage(String message)
+    {
+        if (BluetoothConnectionStatus == true) {
+            byte[] bytes = message.getBytes(Charset.defaultCharset());
+            BluetoothConnectionService.write(bytes);
+            return true;
+        }
+        return false;
     }
 }
