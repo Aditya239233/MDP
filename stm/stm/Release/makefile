@@ -70,7 +70,7 @@ main-build: MDP_stm.elf secondary-outputs
 
 # Tool invocations
 MDP_stm.elf: $(OBJS) $(USER_OBJS) C:\Users\Brian\STM32CubeIDE\workspace_1.7.0\MDP_HelloWorld\STM32F103VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "MDP_stm.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Brian\STM32CubeIDE\workspace_1.7.0\MDP_HelloWorld\STM32F103VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_stm.map" -Wl,--gc-sections -static -L"C:\ST\STM32CubeIDE_1.7.0\STM32CubeIDE\plugins" --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "MDP_stm.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Brian\STM32CubeIDE\workspace_1.7.0\MDP_HelloWorld\STM32F103VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MDP_stm.map" -Wl,--gc-sections -static -L"C:\ST\STM32CubeIDE_1.7.0\STM32CubeIDE\plugins" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

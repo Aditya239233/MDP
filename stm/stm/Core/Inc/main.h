@@ -82,6 +82,8 @@ void Error_Handler(void);
 #define PWMA_GPIO_Port GPIOC
 #define PWMB_Pin GPIO_PIN_7
 #define PWMB_GPIO_Port GPIOC
+#define US_OUT_Pin GPIO_PIN_4
+#define US_OUT_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
