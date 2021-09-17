@@ -4,7 +4,7 @@ from HybridAstarPlanner.hybrid_astar import Path
 from HybridAstarPlanner.utils import Angle, C
 
 SPEED = 0.01 #unit/ms
-ROT_TIME = 623.8873769 #ms/rad
+ROT_TIME = 592.056388302 #ms/rad
 
 # Check the longest sequence for:
 # 1. Rotation - rotation has a different motion from straight-line
@@ -159,7 +159,7 @@ def translate_tour(tour):
 
     for path in tour:
         next_x, next_y, next_angle, instructions = translate(path, next_x, next_y, next_angle)
-        instructions.append("C5000")  # car stop and do image recognition
+        instructions.append("C")  # car stop and do image recognition
         list_of_instructions.extend(instructions)
 
     return list_of_instructions

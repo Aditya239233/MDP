@@ -24,7 +24,7 @@ class C:  # Parameter config
     GEAR_COST = 1.0  # switch back penalty cost
     BACKWARD_COST = 1.0  # backward penalty cost (5.0)
     STEER_CHANGE_COST = 10.0  # steer angle change penalty cost (5.0)
-    STEER_ANGLE_COST = 10.0  # steer angle penalty cost (1.0)
+    STEER_ANGLE_COST = 100.0  # steer angle penalty cost (1.0)
     H_COST = 1.0  # Heuristic cost penalty cost (15.0)
 
     RF = 5.0  # [m] distance from rear wheel to vehicle front end of vehicle
