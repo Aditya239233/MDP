@@ -333,6 +333,10 @@ void move_infinitely(){
 	stop_rear_wheels();
 }
 
+void rotate_left(){
+
+}
+
 uint32_t concatValue(uint8_t arr[20], int s, int e){
 	uint32_t res =0;
 	for (int j=0;j<=e-s;j++){
