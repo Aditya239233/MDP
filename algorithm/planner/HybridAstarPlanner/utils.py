@@ -36,14 +36,17 @@ class C:  # Parameter config
     WB = 3.0  # [m] Wheel base
     TR = 0.4  # [m] Tyre radius
     TW = 0.4  # [m] Tyre width
-    MAX_STEER = 0.6  # [rad] maximum steering angle
+    MAX_STEER = 0.625  # [rad] maximum steering angle
 
+    # Every dimension will be offset by the offset_val
+    OFFSET_X, OFFSET_Y = 10, 10
+    X, Y = 40 + 2 * OFFSET_X, 40 + 2 * OFFSET_Y
     #CAR_START_POS = (30.0, 27.5, Angle.NINETY_DEG) 
-    CAR_START_POS = (3.0, 2.0, Angle.NINETY_DEG)
-    ACTUAL_CAR_LENGTH = 4.0
-    X, Y = 40, 40
+    CAR_START_POS = (3.0 + OFFSET_X, 2.0 + OFFSET_X, Angle.NINETY_DEG)
+    ACTUAL_CAR_LENGTH = 4.2
+
     OBS_LENGTH = 2
-    TOL_SPACE = 4.5 + ACTUAL_CAR_LENGTH/2  # camera space
+    TOL_SPACE = 5.0 + ACTUAL_CAR_LENGTH/2  # camera space
 
 def increment_id(tag):
     if tag == "error":

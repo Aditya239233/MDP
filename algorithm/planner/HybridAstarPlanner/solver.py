@@ -373,7 +373,7 @@ def simulate(tour, obstacles,
         plt.plot(ox_face, oy_face, "sy")
 
         # Plot carpark
-        p1, p2, p3 = [0,6], [6,6], [6,0]
+        p1, p2, p3 = [0+C.OFFSET_X,6+C.OFFSET_Y], [6+C.OFFSET_X,6+C.OFFSET_Y], [6+C.OFFSET_X,0+C.OFFSET_Y]
         plt.plot(p1, p2, p2, p3)
 
         plt.plot(x, y, linewidth=1.5, color='r')
@@ -441,7 +441,7 @@ def save_arena_img(obstacles, error=False):
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
     plt.plot(ox, oy, "sk")
     plt.plot(ox_face, oy_face, "sy")
-    p1, p2, p3 = [0,6], [6,6], [6,0]
+    p1, p2, p3 = [0+C.OFFSET_X,6+C.OFFSET_Y], [6+C.OFFSET_X,6+C.OFFSET_Y], [6+C.OFFSET_X,0+C.OFFSET_Y]
     plt.plot(p1, p2, p2, p3)
     plt.title("Path not found")
     plt.axis("equal")
