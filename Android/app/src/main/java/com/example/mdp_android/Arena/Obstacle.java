@@ -80,21 +80,21 @@ public class Obstacle {
 
     public String setObsFace(int touchCount){
         switch (touchCount){
+            case 0:
+                //Blue: Front
+                obsFace = "North";
+                break;
             case 1:
                 //Green: Left (West)
                 obsFace = "West";
                 break;
-            case 2:
+            case 3:
                 //Red: Right
                 obsFace = "East";
                 break;
-            case 3:
+            case 2:
                 //Yellow: Down
                 obsFace = "South";
-                break;
-            case 0:
-                //Blue: Front
-                obsFace = "North";
                 break;
             default:
                 //Black
@@ -164,7 +164,7 @@ public class Obstacle {
     }
 
     public int setTouchCount(int touchCount) {
-        this.touchCount = touchCount%4;
+        this.touchCount = touchCount % 4;
         return this.touchCount;
     }
 

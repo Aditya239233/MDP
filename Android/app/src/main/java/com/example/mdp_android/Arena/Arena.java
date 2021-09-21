@@ -71,7 +71,7 @@ public class Arena extends View implements Serializable {
 
     //Create only avail when state is true
     private static boolean createCellStatus = false;
-    private static boolean setRobotPostition = true;
+    private static boolean setRobotPostition = false;
     private static boolean setObstaclePosition = false;
     private static boolean validPosition = false;
     private static boolean canDrawRobot = false;
@@ -145,7 +145,7 @@ public class Arena extends View implements Serializable {
 
         mapView = (View) findViewById(R.id.mapView);
 
-        longPressGestureListener = new LongPressGestureListener(this.mapView);
+        longPressGestureListener = new LongPressGestureListener();
         mGestureDetector = new GestureDetectorCompat(context, longPressGestureListener);
 
         obstacleList [0] = new Obstacle (670, 50, 670, 50,"1", 0, "None", obstaclePaint, "1");
@@ -303,6 +303,7 @@ public class Arena extends View implements Serializable {
                             obstacles.setObsFace(obstacles.getTouchCount());
                             Log.d(TAG,obstacles.getObsFace());
                             paintObsFace(newCanvas);
+                            invalidate();
                         }
                     }
                 }
@@ -372,7 +373,7 @@ public class Arena extends View implements Serializable {
             obstacles.drawObj(canvas, obstaclePaint);
 
             canvas.drawText(obstacles.getTargetID(), obstacles.getObsX() + 9, obstacles.getObsY() + 21, obstacleNumberPaint);
-//            paintObsFace(canvas);
+            paintObsFace(canvas);
 
             this.newCanvas = canvas;
         }
@@ -838,4 +839,18 @@ public class Arena extends View implements Serializable {
         }
     }
 
+    public void setRobotLocation(int column, int row, String direction) {
+        resetArena();
+        robotDirection = direction;
+        setCurCoord(column, row);
+        invalidate();
+    }
+
+    public void setBlockId(String id, String target) {
+        for(Obstacle obstacles : obstacleList)
+            if (obstacles.obsID == id)
+                obstacles.setTargetID(target);
+            invalidate();
+
+    }
 }

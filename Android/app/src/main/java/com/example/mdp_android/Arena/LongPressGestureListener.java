@@ -10,8 +10,6 @@ import static com.example.mdp_android.Arena.Arena.findGridOnTouch;
 
 
 public class LongPressGestureListener extends GestureDetector.SimpleOnGestureListener {
-    public LongPressGestureListener(View arenaMap) {
-    }
 
     @Override
     public boolean onSingleTapUp(MotionEvent event) {
