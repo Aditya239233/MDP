@@ -746,13 +746,13 @@ public class Arena extends View implements Serializable {
 
     public void setRobotDirection(String direction){
         Log.d(TAG,"setRobotDirection");
-        if(direction.equals("0")){
+        if(direction.equals("N")){
             robotDirection = "north";
-        } else if (direction.equals("90")){
+        } else if (direction.equals("E")){
             robotDirection = "east";
-        } else if (direction.equals("180")) {
+        } else if (direction.equals("S")) {
             robotDirection = "south";
-        } else if (direction.equals("270")){
+        } else if (direction.equals("W")){
             robotDirection = "west";
         }
         Log.d(TAG,robotDirection);

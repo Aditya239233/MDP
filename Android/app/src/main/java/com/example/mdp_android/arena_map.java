@@ -195,6 +195,7 @@ public class arena_map extends AppCompatActivity {
                     try {
                         String obsID = parts[1];
                         String targetID = parts[2];
+                        arenaMap.setBlockId(obsID,targetID);
                         // your code here
                     }catch(Exception e)
                     {
@@ -206,9 +207,10 @@ public class arena_map extends AppCompatActivity {
                 {
                     Log.d(TAG,"Interpreting ROBOT message");
                     try {
-                        float x = Float.parseFloat(parts[1]);
-                        float y = Float.parseFloat(parts[2]);
+                        int x = Integer.parseInt(parts[1]);
+                        int y = Integer.parseInt(parts[2]);
                         String direction = parts[3];
+                        arenaMap.setRobotLocation(x,y,direction);
                         // your code here
                     }catch(Exception e)
                     {
