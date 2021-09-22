@@ -26,10 +26,6 @@ obstacles = [[32, 31, Angle.ONE_EIGHTY_DEG],
 # [17, 24, Angle.ONE_EIGHTY_DEG],
 # [28, 16, Angle.ZERO_DEG]]
 
-def translate_val_to_sim(obstacles):
-    for obs in obstacles:
-        obs[0] += C.OFFSET_X
-        obs[1] += C.OFFSET_Y
 
 def translate_val_to_real(obstacles):
     real = []
@@ -43,8 +39,6 @@ def translate_val_to_real(obstacles):
 
     return real
 
-translate_val_to_sim(obstacles)
-
 # Example
 p = Planner()
 p.set_obstacles(obstacles)
@@ -54,9 +48,9 @@ print(intructions)
 
 tour = p.get_job(0)
 from HybridAstarPlanner.solver import simulate
-simulate(tour, obstacles, save_gif=True, gif_name="./results/gif/test.gif")
-for path in tour:
-    for i in range(len(path.x)):
-        print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
+simulate(tour, obstacles, save_gif=True, gif_name="./results/gif/apollo1.gif")
+# for path in tour:
+#     for i in range(len(path.x)):
+#         print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
 
-    print("\n\n")
+#     print("\n\n")

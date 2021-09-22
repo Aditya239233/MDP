@@ -14,8 +14,8 @@ class Angle:
 class C:  # Parameter config
     PI = math.pi
 
-    XY_RESO = 0.5  # [m] (1.0)
-    YAW_RESO = np.deg2rad(15.0)  # [rad] (15deg)
+    XY_RESO = 0.5 # [m] (1.0)/(0.5)
+    YAW_RESO = np.deg2rad(10.0)  # [rad] (15deg)
     MOVE_STEP = 0.5   # [m] path interporate resolution (0.5)
     N_STEER = 20.0  # steer command number
     COLLISION_CHECK_STEP = 5  # skip number for collision check
@@ -41,12 +41,11 @@ class C:  # Parameter config
     # Every dimension will be offset by the offset_val
     OFFSET_X, OFFSET_Y = 10, 10
     X, Y = 40 + 2 * OFFSET_X, 40 + 2 * OFFSET_Y
-    #CAR_START_POS = (30.0, 27.5, Angle.NINETY_DEG) 
     CAR_START_POS = (3.0 + OFFSET_X, 2.0 + OFFSET_X, Angle.NINETY_DEG)
     ACTUAL_CAR_LENGTH = 4.2
 
     OBS_LENGTH = 2
-    TOL_SPACE = 5.0 + ACTUAL_CAR_LENGTH/2  # camera space
+    TOL_SPACE = 6.0  # camera space
 
 def increment_id(tag):
     if tag == "error":

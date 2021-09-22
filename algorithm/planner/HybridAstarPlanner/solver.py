@@ -272,9 +272,21 @@ def get_shortest_tour(waypoint_dict, dist_vector):
     return waypoints
 
 
+def translate_val_to_sim(obstacles):
+    new_obstacles = []
+    for obs in obstacles:
+        new_x = obs[0] + C.OFFSET_X
+        new_y = obs[1] + C.OFFSET_Y
+        new_obstacles.append((new_x, new_y, obs[2]))
+
+    return new_obstacles
+
 # Given the obstacles, returns list of paths (from point A to B to C to ...) (a Hamiltonian path)
 # The parameters of the car (inc start position) are defined in utils.C
 def solve(obstacles):
+
+    obstacles = translate_val_to_sim(obstacles)
+    
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
     waypoint_dict = generate_waypoints(C.CAR_START_POS, obstacles)
 
@@ -334,6 +346,8 @@ def simulate(tour, obstacles,
         id = increment_id("gif")
         gif_name = f"./results/gif/{id}.gif"
 
+
+    obstacles = translate_val_to_sim(obstacles)
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
 
     print("Simulation started")
@@ -438,6 +452,7 @@ def save_valid_obstacles(obstacles, id):
 # Used when there is no path found (error), and we want to see which obstacle combinations lead to this error
 def save_arena_img(obstacles, error=False):
 
+    obstacles = translate_val_to_sim(obstacles)
     ox, oy, ox_face, oy_face = design_obstacles(C.X, C.Y, obstacles)
     plt.plot(ox, oy, "sk")
     plt.plot(ox_face, oy_face, "sy")
