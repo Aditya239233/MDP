@@ -421,6 +421,7 @@ public class BluetoothPopUp extends AppCompatActivity {
             editor = sharedPreferences.edit();
             TextView connStatusTextView = findViewById(R.id.connStatusTextView);
             Log.d(TAG, "I'm working");
+            Log.d(TAG, status);
             if(status.equals("connected")){
                 try {
                     myDialog.dismiss();

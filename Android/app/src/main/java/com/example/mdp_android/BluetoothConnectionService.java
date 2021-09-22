@@ -23,6 +23,7 @@ public class BluetoothConnectionService {
     //    public static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     public static final UUID myUUID = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
     private static final String TAG = "BluetoothConnectionServ";
+    public static BluetoothDevice mBTDevice;
     private final BluetoothAdapter mBluetoothAdapter;
     Context mContext;
 
@@ -145,6 +146,7 @@ public class BluetoothConnectionService {
 
     public void startClientThread(BluetoothDevice device, UUID uuid) {
         try {
+            mBTDevice=device;
             mProgressDialog = ProgressDialog.show(mContext, "Connecting Bluetooth", "Please Wait...", true);
         } catch (Exception ignored) {
         }
@@ -207,6 +209,7 @@ public class BluetoothConnectionService {
         public void write(byte[] bytes) {
             try {
                 outStream.write(bytes);
+                Log.d(TAG,"I'm sending out messages");
             } catch (IOException ignored) {
             }
         }
