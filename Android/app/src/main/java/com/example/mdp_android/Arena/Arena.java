@@ -72,7 +72,7 @@ public class Arena extends View implements Serializable {
     //Create only avail when state is true
     private static boolean createCellStatus = false;
     private static boolean setRobotPostition = false;
-    private static boolean setObstaclePosition = false;
+    public static boolean setObstaclePosition = false;
     private static boolean validPosition = false;
     private static boolean canDrawRobot = false;
     private static boolean canDrawObstacle = false;
@@ -91,7 +91,6 @@ public class Arena extends View implements Serializable {
     private GestureDetector.OnDoubleTapListener mDoubleTapListener;
 
     public static boolean gestureType;
-    public Canvas newCanvas;
 
 //    Intent i = new Intent(ArenaMap.this, LongPressGestureListener.class).putExtra("Obstacle", obstacle1);
 
@@ -105,7 +104,7 @@ public class Arena extends View implements Serializable {
         init(attrs);
 
         wallPaint.setColor(Color.WHITE);
-        robotPaint.setColor(Color.parseColor("#bada55"));
+        robotPaint.setColor(Color.parseColor("#ccd8d7"));
         directionPaint.setColor(Color.BLACK);
         unexploredPaint.setColor(Color.parseColor("#ccd8d7"));
         exploredPaint.setColor(Color.GRAY);
@@ -214,7 +213,7 @@ public class Arena extends View implements Serializable {
         for (int x = 0; x < mCols; x++) {
             for (int y = 0; y < mRows; y++) {
 
-                cells[x][y] = new Cell(x * cellSize + (cellSize / 30),
+                cells[x][mRows - y - 1] = new Cell(x * cellSize + (cellSize / 30),
                         y * cellSize + (cellSize / 30),
                         (x + 1) * cellSize - (cellSize / 40),
                         (y + 1) * cellSize - (cellSize / 60), unexploredPaint);
@@ -260,7 +259,7 @@ public class Arena extends View implements Serializable {
                 Log.d(TAG, "onTouchEvent: ACTION_MOVE");
                 //Touch move code
                 for (Obstacle obstacles : obstacleList) {
-                    if (obstacles.getActionDown()) {
+                    if (obstacles.getActionDown() ) {
                         obstacles.setPosition(x, y);
                         isOnClick = false;
                         invalidate();
@@ -275,9 +274,14 @@ public class Arena extends View implements Serializable {
                     for (Obstacle obstacles : obstacleList) {
                         if (obstacles.getActionDown()) {
                             if (isInArena(coordinates)) {
+//                                obstacles.setPosition(cells[coordinates[0]][coordinates[1]].startX, cells[coordinates[0]][coordinates[1]].startY);
                                 obstacles.setObsMapCoord(coordinates[0], coordinates[1]);
                                 String message = ""+ obstacles.getObsID()+","+  + coordinates[0]+ ","+ coordinates[1];
                                 BluetoothConnectionService.sendMessage(message);
+                                Log.d("Hello"+coordinates[0], ""+coordinates[1]);
+                                obstacles.setActionDown(false);
+                                Arena.canDrag(false);
+                                invalidate();
                                 //Direct message to Main Activity
 //                            arena_map.printMessage("ADDOBSTACLE," + obstacles.getObsID() + "," + coordinates[0] + "," + coordinates[1]);
 
@@ -285,24 +289,21 @@ public class Arena extends View implements Serializable {
                                 // Out of bounce = go back to starting point
                                 obstacles.setPosition(obstacles.getInitCoords()[0], obstacles.getInitCoords()[1]);
                                 obstacles.setObsMapCoord(-1, -1);
+                                obstacles.setActionDown(false);
+                                Arena.canDrag(false);
+                                invalidate();
 
                                 //Direct message to Main Activity
 //                            MainActivity.printMessage("SUBOBSTACLE," + obstacles.getObsID() + "," + coordinates[0] + "," + coordinates[1]);
                             }
                         }
-                        obstacles.setActionDown(false);
-                        Arena.canDrag(false);
-                        invalidate();
                     }
                 }
                 else {
                     for (Obstacle obstacles : obstacleList) {
                         if (obstacles.isTouched(x, y) && !obstacles.getActionDown()) {
-                            Log.d("", "We HEREEee");
                             obstacles.setTouchCount(obstacles.getTouchCount()+1);
                             obstacles.setObsFace(obstacles.getTouchCount());
-                            Log.d(TAG,obstacles.getObsFace());
-                            paintObsFace(newCanvas);
                             invalidate();
                         }
                     }
@@ -371,11 +372,9 @@ public class Arena extends View implements Serializable {
 
         for(Obstacle obstacles : obstacleList) {
             obstacles.drawObj(canvas, obstaclePaint);
-
             canvas.drawText(obstacles.getTargetID(), obstacles.getObsX() + 9, obstacles.getObsY() + 21, obstacleNumberPaint);
             paintObsFace(canvas);
 
-            this.newCanvas = canvas;
         }
 
     }
@@ -422,43 +421,50 @@ public class Arena extends View implements Serializable {
             Log.d(TAG,"drawRobot: Coordinates are= " + x + " , " + y);
 
             //Draw Robot box
-            canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, robotPaint);
-            canvas.drawRect(cells[x][y - 1].startX, cells[x][y - 1].startY, cells[x][y - 1].endX, cells[x][y - 1].endY, robotPaint);
-            canvas.drawRect(cells[x + 1][y].startX, cells[x + 1][y].startY, cells[x + 1][y].endX, cells[x + 1][y].endY, robotPaint);
-            canvas.drawRect(cells[x - 1][y].startX, cells[x - 1][y].startY, cells[x - 1][y].endX, cells[x - 1][y].endY, robotPaint);
-            canvas.drawRect(cells[x + 1][y - 1].startX, cells[x + 1][y - 1].startY, cells[x + 1][y - 1].endX, cells[x + 1][y - 1].endY, robotPaint);
-            canvas.drawRect(cells[x - 1][y - 1].startX, cells[x - 1][y - 1].startY, cells[x - 1][y - 1].endX, cells[x - 1][y - 1].endY, robotPaint);
-            canvas.drawRect(cells[x][y + 1].startX, cells[x][y + 1].startY, cells[x][y + 1].endX, cells[x][y + 1].endY, robotPaint);
-            canvas.drawRect(cells[x + 1][y + 1].startX, cells[x + 1][y + 1].startY, cells[x + 1][y + 1].endX, cells[x + 1][y + 1].endY, robotPaint);
-            canvas.drawRect(cells[x - 1][y + 1].startX, cells[x - 1][y + 1].startY, cells[x - 1][y + 1].endX, cells[x - 1][y + 1].endY, robotPaint);
+//            canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, robotPaint);
+//            canvas.drawRect(cells[x][y - 1].startX, cells[x][y - 1].startY, cells[x][y - 1].endX, cells[x][y - 1].endY, robotPaint);
+//            canvas.drawRect(cells[x + 1][y].startX, cells[x + 1][y].startY, cells[x + 1][y].endX, cells[x + 1][y].endY, robotPaint);
+//            canvas.drawRect(cells[x - 1][y].startX, cells[x - 1][y].startY, cells[x - 1][y].endX, cells[x - 1][y].endY, robotPaint);
+//            canvas.drawRect(cells[x + 1][y - 1].startX, cells[x + 1][y - 1].startY, cells[x + 1][y - 1].endX, cells[x + 1][y - 1].endY, robotPaint);
+//            canvas.drawRect(cells[x - 1][y - 1].startX, cells[x - 1][y - 1].startY, cells[x - 1][y - 1].endX, cells[x - 1][y - 1].endY, robotPaint);
+//            canvas.drawRect(cells[x][y + 1].startX, cells[x][y + 1].startY, cells[x][y + 1].endX, cells[x][y + 1].endY, robotPaint);
+//            canvas.drawRect(cells[x + 1][y + 1].startX, cells[x + 1][y + 1].startY, cells[x + 1][y + 1].endX, cells[x + 1][y + 1].endY, robotPaint);
+//            canvas.drawRect(cells[x - 1][y + 1].startX, cells[x - 1][y + 1].startY, cells[x - 1][y + 1].endX, cells[x - 1][y + 1].endY, robotPaint);
 
             //Robot direction (Arrow)
             Path path = new Path();
             Log.d(TAG,"Robot direction: " + direction);
             switch (direction){
                 case "north":
-                    path.moveTo(cells[x][y - 1].startX + halfWidth, cells[x][y - 1].startY); // Top
-                    path.lineTo(cells[x][y - 1].startX, cells[x][y - 1].endY); // Bottom left
-                    path.lineTo(cells[x][y - 1].endX, cells[x][y - 1].endY); // Bottom right
-                    path.lineTo(cells[x][y - 1].startX + halfWidth, cells[x][y - 1].startY); // Back to Top
+                    path.moveTo(cells[x][y].startX, cells[x][y].startY + 2*halfWidth);
+                    path.lineTo(cells[x][y].startX + ( (int) (2*halfWidth) >> 1),
+                            cells[x][y].startY);
+                    path.lineTo(cells[x][y].startX + 2*halfWidth, cells[x][y].startY + 2*halfWidth);
                     break;
                 case "south":
-                    path.moveTo(cells[x][y + 1].endX - halfWidth, cells[x][y + 1].endY); // Top
-                    path.lineTo(cells[x][y + 1].startX, cells[x][y + 1].startY); // Bottom left
-                    path.lineTo(cells[x + 1][y + 1].startX, cells[x +1][y + 1].startY); // Bottom right
-                    path.lineTo(cells[x][y + 1].endX - halfWidth, cells[x][y + 1].endY); // Back to Top
+                    path.moveTo(cells[x][y].startX, cells[x][y].startY);
+                    path.lineTo(cells[x][y].startX + ( (int) (2*halfWidth) >> 1),
+                            cells[x][y].startY + 2* halfWidth);
+                    path.lineTo(cells[x][y].startX + 2*halfWidth, cells[x][y].startY);
                     break;
                 case "east":
-                    path.moveTo(cells[x+1][y].startX + (2*halfWidth), cells[x][y].startY + halfWidth); // Top
-                    path.lineTo(cells[x+1][y].startX, cells[x+1][y].startY); // Bottom left
-                    path.lineTo(cells[x+1][y+1].startX, cells[x+1][y+1].startY); // Bottom right
-                    path.lineTo(cells[x+1][y].startX + (2*halfWidth) , cells[x][y].startY + halfWidth); // Back to Top
+//                    path.moveTo(cells[x+1][y].startX + (2*halfWidth), cells[x][y].startY + halfWidth); // Top
+//                    path.lineTo(cells[x][y].startX, cells[x][y].startY); // Bottom left
+//                    path.lineTo(cells[x][y+1].startX, cells[x+1][y+1].startY); // Bottom right
+//                    path.lineTo(cells[x+1][y].startX + (2*halfWidth) , cells[x][y].startY + halfWidth); // Back to Top
+//                    canvas.drawText("0", cells[x+1][y].startX, cells[x+1][y].startY , obstacleNumberPaint);
+//                    canvas.drawText("1", cells[x+1][y+1].startX, cells[x+1][y+1].startY , obstacleNumberPaint);
+//                    canvas.drawText("2",cells[x+1][y].startX + (1*halfWidth) , cells[x][y].startY + halfWidth , obstacleNumberPaint);
+                    path.moveTo(cells[x][y].startX, cells[x][y].startY);
+                    path.lineTo(cells[x][y].startX + 2*halfWidth,
+                            cells[x][y].startY + ( (int) (2*halfWidth) >> 1));
+                    path.lineTo(cells[x][y].startX, cells[x][y].startY + 2*halfWidth);
                     break;
                 case "west":
-                    path.moveTo(cells[x-1][y].startX, cells[x][y].startY + halfWidth); // Top
-                    path.lineTo(cells[x][y].startX, cells[x][y].startY); // Bottom left
-                    path.lineTo(cells[x][y + 1].startX, cells[x][y  +1].startY); // Bottom right
-                    path.lineTo(cells[x-1][y].startX, cells[x][y].startY + halfWidth); // Back to Top
+                    path.moveTo(cells[x][y].startX + halfWidth*2, cells[x][y].startY);
+                    path.lineTo(cells[x][y].startX,
+                            cells[x][y].startY + ( (int) (2*halfWidth) >> 1));
+                    path.lineTo(cells[x][y].startX + halfWidth*2, cells[x][y].startY + 2*halfWidth);
                     break;
             }
             path.close();
@@ -479,7 +485,7 @@ public class Arena extends View implements Serializable {
 
         for (Obstacle obstacles : obstacleList) {
             r = new Rect((int)obstacles.getObsX(), (int)obstacles.getObsY(),(int)obstacles.getObsX() + 31, (int)obstacles.getObsY() + 31);
-
+            canvas.drawText(obstacles.getTargetID(), obstacles.getObsX() , obstacles.getObsY(), obstacleNumberPaint);
 
             canvas.drawRect(r, obstaclePaint);
             canvas.drawText(obstacles.getTargetID(), obstacles.getObsX() + 9, obstacles.getObsY() + 21, obstacleNumberPaint);
@@ -546,17 +552,17 @@ public class Arena extends View implements Serializable {
         //Row
         for (int x = 0; x < 20; x++) {
             if(x >9 && x <20){
-                canvas.drawText(Integer.toString(x), cells[x][19].startX + (cellSize / 5), cells[x][19].endY + (cellSize / 1.5f), gridNumberPaint);
+                canvas.drawText(Integer.toString(x), cells[x][0].startX + (cellSize / 5), cells[x][0].endY + (cellSize / 1.5f), gridNumberPaint);
             } else {
-                canvas.drawText(Integer.toString(x), cells[x][19].startX + (cellSize / 3), cells[x][19].endY + (cellSize / 1.5f), gridNumberPaint);
+                canvas.drawText(Integer.toString(x), cells[x][0].startX + (cellSize / 3), cells[x][0].endY + (cellSize / 1.5f), gridNumberPaint);
             }
         }
         //Column
         for (int x = 0; x <20; x++) {
             if(x >9 && x <20){
-                canvas.drawText(Integer.toString(19 - x), cells[0][x].startX - (cellSize / 1.5f), cells[0][x].endY - (cellSize / 3.5f), gridNumberPaint);
+                canvas.drawText(Integer.toString(x), cells[0][x].startX - (cellSize / 1.2f), cells[0][x].endY - (cellSize / 3.5f), gridNumberPaint);
             } else {
-                canvas.drawText(Integer.toString(19 - x), cells[0][x].startX - (cellSize / 1.2f), cells[0][x].endY - (cellSize / 3.5f), gridNumberPaint);
+                canvas.drawText(Integer.toString(x), cells[0][x].startX - (cellSize / 1.5f), cells[0][x].endY - (cellSize / 3.5f), gridNumberPaint);
             }
         }
     }
@@ -638,7 +644,10 @@ public class Arena extends View implements Serializable {
         canUpdateObsFace = false;
 
         setStartingPoint(false);
-        arena_map.setRobotDetails(-1, -1, "north");
+        arena_map.setRobotDetails(-1, -1, "west");
+        for (Obstacle obstacles : obstacleList) {
+            obstacles.setPosition(obstacles.getInitCoords()[0], obstacles.getInitCoords()[1]);
+        }
 
         invalidate();
     }

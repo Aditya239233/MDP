@@ -23,6 +23,7 @@ public class LongPressGestureListener extends GestureDetector.SimpleOnGestureLis
         super.onLongPress(e);
         Log.d("TAG","onLongPress: LONG PRESS!");
         Arena.gestureType = false;
+        Arena.setObstaclePosition = true;
         // e will give you the location and everything else you want
         // This is where you will be doing whatever you want to.
         int eIndex = MotionEventCompat.getActionIndex(e);
