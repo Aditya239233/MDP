@@ -91,6 +91,8 @@ public class Arena extends View implements Serializable {
     private GestureDetector.OnDoubleTapListener mDoubleTapListener;
 
     public static boolean gestureType;
+    public static int robot_x;
+    public static int robot_y;
 
 //    Intent i = new Intent(ArenaMap.this, LongPressGestureListener.class).putExtra("Obstacle", obstacle1);
 
@@ -315,7 +317,8 @@ public class Arena extends View implements Serializable {
             if (isInArena(coordinates)) {
                 if ((coordinates[0] != 0 && coordinates[0] != 19) && (coordinates[1] != 0 && coordinates[1] != 19)) {
                     setCurCoord(coordinates[0], coordinates[1]);
-
+                    robot_x = coordinates[0];
+                    robot_y = coordinates[1];
                     invalidate();
                 }
             }
@@ -794,6 +797,8 @@ public class Arena extends View implements Serializable {
         Log.d(TAG,"Entering setCurCoord");
         curCoord[0] = col;
         curCoord[1] = row;
+        robot_x = col;
+        robot_y = row;
 
         Log.d(TAG, col + "," + row);
 
@@ -860,6 +865,23 @@ public class Arena extends View implements Serializable {
             if (obstacles.obsID == id)
                 obstacles.setTargetID(target);
             invalidate();
+
+    }
+    public static String sendArenaInformation() {
+        String robot_direction = robotDirection;
+        robot_x = 1;
+        robot_y = 1;
+
+        String message = "ROBOT," + robot_x +"," + robot_y +"," + robot_direction + ";";
+        for (Obstacle obstacles : obstacleList) {
+            String id = obstacles.getObsID();
+            String obstacle_direction = obstacles.getObsFace();
+            float obstacle_coords[] = obstacles.getObsMapCoord();
+            message = message + "OBSTACLE," + id + "," + obstacle_coords[0] + "," + obstacle_coords[1] + "," + obstacle_direction + ";";
+
+        }
+
+        return message;
 
     }
 }
