@@ -105,7 +105,8 @@ public class arena_map extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Log.d(TAG,"start button called");
+                BluetoothConnectionService.sendMessage(Arena.sendArenaInformation());
             }
         });
     }
