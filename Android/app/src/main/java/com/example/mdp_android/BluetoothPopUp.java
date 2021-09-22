@@ -91,7 +91,7 @@ public class BluetoothPopUp extends AppCompatActivity {
         Log.d(TAG, "I'm created!");
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
+//        mBTDevice=
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
@@ -464,7 +464,7 @@ public class BluetoothPopUp extends AppCompatActivity {
                     Log.d(TAG, "BluetoothPopUp: mBroadcastReceiver5 Dialog show failure");
                 }
                 retryConnection = true;
-                //reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
+                reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
 
             }
             if(status.equals("disconnected")) connStatusTextView.setText("Disconnected");

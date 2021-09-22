@@ -158,7 +158,7 @@ public class Arena extends View implements Serializable {
         mDoubleTapListener = new GestureDetector.OnDoubleTapListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                Toast.makeText(getContext(), "onSingleTapConfirmed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "onSingleTapConfirmed", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -278,8 +278,8 @@ public class Arena extends View implements Serializable {
                             if (isInArena(coordinates)) {
 //                                obstacles.setPosition(cells[coordinates[0]][coordinates[1]].startX, cells[coordinates[0]][coordinates[1]].startY);
                                 obstacles.setObsMapCoord(coordinates[0], coordinates[1]);
-                                String message = ""+ obstacles.getObsID()+","+  + coordinates[0]+ ","+ coordinates[1];
-                                BluetoothConnectionService.sendMessage(message);
+//                                String message = ""+ obstacles.getObsID()+","+  + coordinates[0]+ ","+ coordinates[1];
+//                                BluetoothConnectionService.sendMessage(message);
                                 Log.d("Hello"+coordinates[0], ""+coordinates[1]);
                                 obstacles.setActionDown(false);
                                 Arena.canDrag(false);
@@ -477,7 +477,8 @@ public class Arena extends View implements Serializable {
             setRobotPostition = false;
             arena_map.setRobotDetails(x, y, direction);
             String message = ""+"ROBOT"+","+x+","+ y+","+direction;
-            BluetoothConnectionService.sendMessage(message);
+            //
+            // BluetoothConnectionService.sendMessage(message);
         }
     }
 

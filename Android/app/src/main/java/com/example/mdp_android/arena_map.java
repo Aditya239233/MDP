@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -42,7 +43,6 @@ public class arena_map extends AppCompatActivity {
     private static Arena arenaMap;
     static TextView txtRobotDirection, txtRobotCoord;
     ProgressDialog myDialog;
-
 
 
     @Override
@@ -183,6 +183,7 @@ public class arena_map extends AppCompatActivity {
                 Log.d(TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
                 Toast.makeText(arena_map.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_LONG).show();
                 editor.putString("connStatus", "Disconnected");
+//                reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
                 myDialog.show();
             }
             editor.commit();

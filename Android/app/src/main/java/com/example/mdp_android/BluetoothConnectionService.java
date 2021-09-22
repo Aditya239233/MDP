@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
-
+import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
@@ -20,8 +20,9 @@ import java.util.UUID;
 public class BluetoothConnectionService {
 
     private static final String appName = "MDP_Group_26";
-    public static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
+    //    public static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    public static final UUID myUUID = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
+    private static final String TAG = "BluetoothConnectionServ";
     private final BluetoothAdapter mBluetoothAdapter;
     Context mContext;
 
@@ -33,7 +34,7 @@ public class BluetoothConnectionService {
     ProgressDialog mProgressDialog;
     Intent connectionStatus;
 
-    public static boolean BluetoothConnectionStatus=false;
+    public static boolean BluetoothConnectionStatus = false;
     private static ConnectedThread mConnectedThread;
 
     public BluetoothConnectionService(Context context) {
@@ -43,7 +44,7 @@ public class BluetoothConnectionService {
     }
 
 
-    private class AcceptThread extends Thread{
+    private class AcceptThread extends Thread {
         private final BluetoothServerSocket ServerSocket;
 
         public AcceptThread() {
@@ -51,55 +52,61 @@ public class BluetoothConnectionService {
 
             try {
                 tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, myUUID);
-            } catch(IOException ignored) {}
+            } catch (IOException ignored) {
+            }
             ServerSocket = tmp;
         }
 
-        public void run(){
-            BluetoothSocket socket =null;
+        public void run() {
+            BluetoothSocket socket = null;
             try {
                 socket = ServerSocket.accept();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
 
-            if(socket != null){
+            if (socket != null) {
                 connected(socket, socket.getRemoteDevice());
             }
         }
 
-        public void cancel(){
-            try{
+        public void cancel() {
+            try {
                 ServerSocket.close();
-            } catch(IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
 
     }
 
-    private class ConnectThread extends Thread{
+    private class ConnectThread extends Thread {
         private BluetoothSocket mSocket;
 
-        public ConnectThread(BluetoothDevice device, UUID u){
+        public ConnectThread(BluetoothDevice device, UUID u) {
             mDevice = device;
             deviceUUID = u;
         }
 
-        public void run(){
+        public void run() {
             BluetoothSocket tmp = null;
 
             try {
                 tmp = mDevice.createRfcommSocketToServiceRecord(deviceUUID);
-            } catch (IOException ignored) {}
-            mSocket= tmp;
+            } catch (IOException ignored) {
+            }
+            mSocket = tmp;
             mBluetoothAdapter.cancelDiscovery();
 
             try {
                 mSocket.connect();
 
-                connected(mSocket,mDevice);
-
+                connected(mSocket, mDevice);
+                Log.d(TAG,"ahahhahaa");
             } catch (IOException e) {
                 try {
                     mSocket.close();
-                } catch (IOException ignored) {}
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
 
                 try {
                     BluetoothPopUp mBluetoothPopUpActivity = (BluetoothPopUp) mContext;
@@ -111,40 +118,42 @@ public class BluetoothConnectionService {
             }
             try {
                 mProgressDialog.dismiss();
-            } catch(NullPointerException e){
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         }
 
-        public void cancel(){
-            try{
+        public void cancel() {
+            try {
                 mSocket.close();
-            } catch(IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
-    public synchronized void startAcceptThread(){
+    public synchronized void startAcceptThread() {
 
-        if(mConnectThread != null){
+        if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
         }
-        if(mInsecureAcceptThread == null){
+        if (mInsecureAcceptThread == null) {
             mInsecureAcceptThread = new AcceptThread();
             mInsecureAcceptThread.start();
         }
     }
 
-    public void startClientThread(BluetoothDevice device, UUID uuid){
+    public void startClientThread(BluetoothDevice device, UUID uuid) {
         try {
             mProgressDialog = ProgressDialog.show(mContext, "Connecting Bluetooth", "Please Wait...", true);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         mConnectThread = new ConnectThread(device, uuid);
         mConnectThread.start();
     }
 
-    private class ConnectedThread extends Thread{
+    private class ConnectedThread extends Thread {
         private final InputStream inStream;
         private final OutputStream outStream;
 
@@ -170,11 +179,11 @@ public class BluetoothConnectionService {
             outStream = tmpOut;
         }
 
-        public void run(){
+        public void run() {
             byte[] buffer = new byte[1024];
             int bytes;
 
-            while(true){
+            while (true) {
                 try {
                     bytes = inStream.read(buffer);
                     String incomingmessage = new String(buffer, 0, bytes);
@@ -195,16 +204,17 @@ public class BluetoothConnectionService {
             }
         }
 
-        public void write(byte[] bytes){
+        public void write(byte[] bytes) {
             try {
                 outStream.write(bytes);
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
 
     private void connected(BluetoothSocket mSocket, BluetoothDevice device) {
-        mDevice =  device;
+        mDevice = device;
         if (mInsecureAcceptThread != null) {
             mInsecureAcceptThread.cancel();
             mInsecureAcceptThread = null;
@@ -214,11 +224,11 @@ public class BluetoothConnectionService {
         mConnectedThread.start();
     }
 
-    public static void write(byte[] out){
+    public static void write(byte[] out) {
         mConnectedThread.write(out);
     }
-    public static boolean sendMessage(String message)
-    {
+
+    public static boolean sendMessage(String message) {
         if (BluetoothConnectionStatus == true) {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);
