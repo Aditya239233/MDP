@@ -1,31 +1,42 @@
-from translate import translate_tour
-from HybridAstarPlanner.solver import solve
-from HybridAstarPlanner.utils import Angle
-from test.planner_test import PlannerTest
-from flask import *
-import json, time, ast
-import pickle
+from testset import TestSet
+from algorithms.hybrid_astar.solver import solve
+from utils.translate import translate_tour
+from entity.obstacle import Obstacle
+from entity.arena import Arena
+from utils.car_utils import Car_C
 class Planner:
     
     def __init__(self):
         self.job_id = 0
-        self.obstacles = None
+        self.arena = None
         self.cache = {} # store previous results
 
-    def set_obstacles(self, obstacles):
-        self.obstacles = obstacles
+    def set_arena(self, arena):
+        self.arena = arena
+
+    def init_arena(self, obstacles, start_pos=None):
+        if start_pos == None:
+            start_pos = Car_C.START_POS
+
+        obstacles = self.convert_obstacles(obstacles)
+        
+        self.arena = Arena()
+        self.arena.set_obstacles(obstacles)
+        self.arena.set_start_pos(start_pos)
+
+        return self.arena
     
     def run_job(self):
-        if self.obstacles == None:
-            raise Exception("Obstacles not defined")
+        if self.arena == None:
+            raise Exception("Arena not defined")
         else:
             try:
-                paths = solve(self.obstacles)
+                paths, tour_seq = solve(self.arena)
             except Exception as e:
                 print(f"Job {self.job_id} has no results.")
-                paths = None
+                paths = tour_seq = None
             finally:
-                self.cache[self.job_id] = paths
+                self.cache[self.job_id] = (paths, tour_seq)
                 self.job_id += 1
                 self.obstacles = None
 
@@ -33,74 +44,66 @@ class Planner:
 
     def get_instructions(self, job_id):
 
-        tour = self.cache[job_id]
+        tour, tour_seq = self.cache[job_id]
 
         if tour != None:
-            return translate_tour(tour)
+            instructions, _ = translate_tour(tour, tour_seq)
+            return instructions
         else:
             return None
 
-    def get_job(self, job_id):
-        return self.cache[job_id]
+    def get_tour_from_job(self, job_id):
+        return self.cache[job_id][0]
 
     def get_path(self, job_id):
         path = []
-        for i in self.cache[job_id]:
-            for j in range(len(i.x)):
-                lst = []
-                lst.append(i.x[j])
-                lst.append(i.y[j])
-                lst.append(i.yaw[j]) 
-                path.append(lst)
+
+        for path in self.cache[job_id][0]:
+            for i in range(len(path.x)):
+                x = path.x[i]
+                y = path.y[i]
+                yaw = path.yaw[i]
+
+                path.append([x, y, yaw])
+
             path.append([-1,-1,-1])
                 
         return path
 
-app = Flask(__name__)
-planner = Planner()
+    # Convert list of obstacles defined in TestSet into list of Obstacle objects to use in Arena
+    def convert_obstacles(self, obstacles):
+        img_id = 0 # image id
+        arr = []
 
-# api function
-@app.route('/get-path/', methods=['GET'])
-def get_path_coor():
-    obstacles = str(request.args.get('obstacles')) #/get-path/?obstacles=[10,20,etc]
-    obstacles = ast.literal_eval(obstacles)
+        for obstacle in obstacles:
+            x, y, face_angle = obstacle
+            obs = Obstacle(x, y, face_angle, img_id)
+            arr.append(obs)
 
-    angleDict = {
-        'N': Angle.NINETY_DEG,
-        'E': Angle.ZERO_DEG,
-        'S': Angle.TWO_SEVENTY_DEG,
-        'W': Angle.ONE_EIGHTY_DEG
-    }
+            img_id += 1
 
-    for i in range(len(obstacles)):
-        curr = obstacles[i]
-        obstacles[i] = (curr[0], curr[1],angleDict[curr[2]] )
-        
-    print(obstacles)
-    # obs = get_obstacles()
-    planner.set_obstacles(obstacles)
-    curr_job_id = planner.run_job()
-    data = {'status': "success", "data": planner.get_path(curr_job_id), "id": curr_job_id}
-    json_dump = json.dumps(data)
-    return Response(json_dump, mimetype='application/json; charset=utf-8')
-
-@app.route('/get-instructions/', methods=['GET'])
-def get_instructions():
-    job_id = str(request.args.get("id"))  #/get-path/?id=1
-
-    if not job_id.isdigit():
-        return Response(status=404)
-    else:
-        job_id = int(job_id)
-
-    instructions = planner.get_instructions(job_id)
-
-    if instructions != None:
-        json_dump = json.dumps(instructions)
-        return Response(json_dump, mimetype='application/json; charset=utf-8')
-    else:
-        return Response(status=404)
+        return arr
 
 
+# Example
 if __name__ == "__main__":
-    app.run(port=3000)
+
+    def print_instructions(instructions):
+        for i in instructions:
+            print(i)
+
+    p = Planner()
+    obstacles = TestSet.obstacles
+    arena = p.init_arena(obstacles)
+    job_id = p.run_job()
+    instructions = p.get_instructions(job_id)
+    print_instructions(instructions)
+
+    tour = p.get_tour_from_job(job_id)
+    from algorithms.hybrid_astar.simulate import simulate
+    simulate(tour, arena, save_gif=True, gif_name="./results/gif/apollo1.gif")
+    # for path in tour:
+    #     for i in range(len(path.x)):
+    #         print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
+
+    #     print("\n\n")

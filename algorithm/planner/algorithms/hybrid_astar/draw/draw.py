@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+from utils.car_utils import Car_C
+
 PI = np.pi
 
 
@@ -58,16 +60,19 @@ class Car:
                  linewidth=1, color='black')
 
         Arrow(x, y, yaw, L / 2, 'black')
-        # plt.axis("equal")
-        # plt.show()
 
 
-def draw_car(x, y, yaw, steer, C, color='black'):
-    car = np.array([[-C.RB, -C.RB, C.RF, C.RF, -C.RB],
-                    [C.W / 2, -C.W / 2, -C.W / 2, C.W / 2, C.W / 2]])
+def draw_car(x, y, yaw, steer, color='black', extended_car=True):
 
-    wheel = np.array([[-C.TR, -C.TR, C.TR, C.TR, -C.TR],
-                      [C.TW / 4, -C.TW / 4, -C.TW / 4, C.TW / 4, C.TW / 4]])
+    if extended_car:
+        car = np.array([[-Car_C.RB, -Car_C.RB, Car_C.RF, Car_C.RF, -Car_C.RB, Car_C.ACTUAL_RF, Car_C.ACTUAL_RF, -Car_C.ACTUAL_RB, -Car_C.ACTUAL_RB],
+                    [Car_C.W / 2, -Car_C.W / 2, -Car_C.W / 2, Car_C.W / 2, Car_C.W / 2, Car_C.W/2, -Car_C.W/2, -Car_C.W/2, Car_C.W/2]])
+    else:
+        car = np.array([[-Car_C.RB, -Car_C.RB, Car_C.RF, Car_C.RF, -Car_C.RB],
+                    [Car_C.W / 2, -Car_C.W / 2, -Car_C.W / 2, Car_C.W / 2, Car_C.W / 2]])
+
+    wheel = np.array([[-Car_C.TR, -Car_C.TR, Car_C.TR, Car_C.TR, -Car_C.TR],
+                      [Car_C.TW / 4, -Car_C.TW / 4, -Car_C.TW / 4, Car_C.TW / 4, Car_C.TW / 4]])
 
     rlWheel = wheel.copy()
     rrWheel = wheel.copy()
@@ -83,10 +88,10 @@ def draw_car(x, y, yaw, steer, C, color='black'):
     frWheel = np.dot(Rot2, frWheel)
     flWheel = np.dot(Rot2, flWheel)
 
-    frWheel += np.array([[C.WB], [-C.WD / 2]])
-    flWheel += np.array([[C.WB], [C.WD / 2]])
-    rrWheel[1, :] -= C.WD / 2
-    rlWheel[1, :] += C.WD / 2
+    frWheel += np.array([[Car_C.WB], [-Car_C.WD / 2]])
+    flWheel += np.array([[Car_C.WB], [Car_C.WD / 2]])
+    rrWheel[1, :] -= Car_C.WD / 2
+    rlWheel[1, :] += Car_C.WD / 2
 
     frWheel = np.dot(Rot1, frWheel)
     flWheel = np.dot(Rot1, flWheel)
@@ -106,9 +111,5 @@ def draw_car(x, y, yaw, steer, C, color='black'):
     plt.plot(rrWheel[0, :], rrWheel[1, :], color)
     plt.plot(flWheel[0, :], flWheel[1, :], color)
     plt.plot(rlWheel[0, :], rlWheel[1, :], color)
-    Arrow(x, y, yaw, C.WB * 0.8, color)
+    Arrow(x, y, yaw, Car_C.WB * 0.8, color)
 
-
-if __name__ == '__main__':
-    # Arrow(-1, 2, 60)
-    Car(0, 0, 1, 2, 60)

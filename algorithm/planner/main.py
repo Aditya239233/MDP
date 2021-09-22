@@ -1,56 +1,61 @@
-from planner import Planner
-from HybridAstarPlanner.utils import Angle, C
-from HybridAstarPlanner import solver
+# For testing/running the algorithm
+from utils.translate import translate_tour
+from utils.helpers import get_angle_from_direction
+from utils.arena_utils import Arena_C
 
-# Test
-obstacles = [[32, 31, Angle.ONE_EIGHTY_DEG],
-[18, 16, Angle.ZERO_DEG],
-[9, 33, Angle.TWO_SEVENTY_DEG],
-[17, 24, Angle.ONE_EIGHTY_DEG],
-[28, 21, Angle.NINETY_DEG]]
+from entity.arena import Arena
+from entity.obstacle import Obstacle
+from algorithms.hybrid_astar.solver import solve
 
-#Test 2
-# obstacles = [[10,14,Angle.TWO_SEVENTY_DEG],[20,14,Angle.TWO_SEVENTY_DEG],
-# [30, 22,Angle.ZERO_DEG],[10,22,Angle.NINETY_DEG],[20,22,Angle.NINETY_DEG]]
+# For running Task 1.
+# This class is designed to run only once
+class Runner:
+    def __init__(self, data_str):
+        car_start_pos, obstacles = self.process(data_str)
+        self.arena = Arena()
 
+        self.arena.set_obstacles(obstacles)
+        self.arena.set_start_pos(car_start_pos)
+        
+        from algorithms.hybrid_astar.simulate import save_arena_img
+        save_arena_img(self.arena, error=True)
 
-
-#Test 4
-# obstacles = [[10,8,Angle.ONE_EIGHTY_DEG],[10,16,Angle.ONE_EIGHTY_DEG],[10, 24,Angle.ONE_EIGHTY_DEG],
-# [10,30,Angle.ONE_EIGHTY_DEG],[10,36,Angle.ONE_EIGHTY_DEG]]
-
-# Test 5
-# obstacles = [[32, 31, Angle.ONE_EIGHTY_DEG],
-# [18, 16, Angle.ZERO_DEG],
-# [9, 33, Angle.TWO_SEVENTY_DEG],
-# [17, 24, Angle.ONE_EIGHTY_DEG],
-# [28, 16, Angle.ZERO_DEG]]
-
-
-def translate_val_to_real(obstacles):
-    real = []
-    for obs in obstacles:
-        t = []
-        t.append(obs[0] * 5)
-        t.append(obs[1] * 5)
-        t.append(obs[2])
     
-        real.append(t)
+    def run(self):
+        tour, tour_sequence = solve(self.arena)
+        instructions, android_data = translate_tour(tour, tour_sequence)
+        return instructions, android_data
 
-    return real
+    
+    def process(self, data_str):
+        split_str = data_str.split(";")
+        obstacles = []
 
-# Example
-p = Planner()
-p.set_obstacles(obstacles)
-job_id = p.run_job()
-intructions = p.get_instructions(job_id)
-print(intructions)
+        for data in split_str:
+            param = data.split(",")
 
-tour = p.get_job(0)
-from HybridAstarPlanner.solver import simulate
-simulate(tour, obstacles, save_gif=True, gif_name="./results/gif/apollo1.gif")
-# for path in tour:
-#     for i in range(len(path.x)):
-#         print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
+            if param[0].upper() == "ROBOT":
+                robot_x = int(param[1]) * Arena_C.SCALE
+                robot_y = int(param[2]) * Arena_C.SCALE
+                direction = get_angle_from_direction(param[3])
 
-#     print("\n\n")
+                start_pos = (robot_x, robot_y, direction)
+
+            elif param[0].upper() == "OBSTACLE":
+                obs_id = int(param[1])
+                obs_x = int(param[2]) * Arena_C.SCALE
+                obs_y = int(param[3]) * Arena_C.SCALE
+                obs_direction = get_angle_from_direction(param[4])
+                obs = Obstacle(obs_x, obs_y, obs_direction, obs_id)
+                obstacles.append(obs)
+
+        return start_pos, obstacles
+
+
+if __name__ == "__main__":
+    data_str = "ROBOT,1,1,N;OBSTACLE,1,11,10,W;OBSTACLE,2,0,5,N;OBSTACLE,3,6,18,S"
+    runner = Runner(data_str)
+    instructions, android_coor = runner.run()
+    print(instructions)
+
+    print(android_coor)

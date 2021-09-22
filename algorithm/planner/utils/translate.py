@@ -2,8 +2,8 @@ import pickle
 import math
 
 from numpy import add
-from HybridAstarPlanner.hybrid_astar import Path
-from HybridAstarPlanner.utils import Angle, C
+from entity.path import Path
+from utils.angles import Angle
 
 SPEED = 0.01 #unit/ms
 ROT_TIME = 592.056388302 #ms/rad
@@ -169,28 +169,31 @@ def get_instruction(section):
 
 def translate(path):
 
+    pos_after_instruction = []
+    instructions = []
+    curr_section = []
+
     # check for anomalies in steer (-ve +ve -ve or +ve -ve +ve)
     for i in range(1, len(path.x)-1):
         if same_sign(path.steer[i-1], path.steer[i+1]) and not same_sign(path.steer[i], path.steer[i+1]):
             path.steer[i] *= -1
-
-    instructions = []
-    curr_section = []
 
     x, y, direction, yaw, steer = path.x[0], path.y[0], path.direction[0], path.yaw[0], path.steer[0]
     prev_motion = get_car_motion(direction, steer)
     curr_section.append((x, y, direction, yaw, steer))
 
     for i in range(1, len(path.x)):
-        x, y, direction, yaw, steer = path.x[i], path.y[i], path.direction[i], path.yaw[i], path.steer[i]
-        val = (x, y, direction, yaw, steer)
+        curr_x, curr_y, curr_direction, curr_yaw, curr_steer = path.x[i], path.y[i], path.direction[i], path.yaw[i], path.steer[i]
+        val = (curr_x, curr_y, curr_direction, curr_yaw, curr_steer)
         
-        curr_motion = get_car_motion(direction, steer)
+        curr_motion = get_car_motion(curr_direction, curr_steer)
 
         if curr_motion != prev_motion:
             curr_section.append(val)
             curr_instruction = get_instruction(curr_section)
             instructions.append(curr_instruction)
+
+            pos_after_instruction.append((curr_x, curr_y, curr_yaw))
 
             curr_section = [val]
         else:
@@ -201,17 +204,25 @@ def translate(path):
     if curr_section:
         curr_instruction = get_instruction(curr_section)
         instructions.append(curr_instruction)
+        pos_after_instruction.append((curr_x, curr_y, curr_yaw))
     
 
-    return instructions
+    return instructions, pos_after_instruction
         
 
-def translate_tour(tour):
+def translate_tour(tour, tour_seq):
     list_of_instructions = []
+    list_of_coor = []
+    tour_seq = tour_seq[1:]  # remove the starting pos - labelled as -1
+    i = 0
 
     for path in tour:
-        instructions = translate(path)
-        instructions.append("C")  # car stop and do image recognition
-        list_of_instructions.append(instructions)
+        instructions, android_coor = translate(path)
+        instructions.append(f"C{tour_seq[i]}")  # car stop and do image recognition
 
-    return list_of_instructions
+        list_of_instructions.append(instructions)
+        list_of_coor.append(android_coor)
+
+        i += 1
+
+    return list_of_instructions, list_of_coor
