@@ -22,8 +22,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
-from algorithm.planner.planner import Planner
-from algorithm.planner.HybridAstarPlanner.utils import C
+from algorithm.planner.main import Runner
 
 FILE = Path(__file__).absolute()
 sys.path.append(FILE.parents[0].as_posix())  # add yolov5/ to path
@@ -83,28 +82,6 @@ def stichandshow(img_map,save_path):
         stichImg(save_path[:-1])
         #os._exit(0)
     
-# Convert android obstacle list into a list that can be used by planner
-def preprocess(android_data):
-    split_str = android_data.split(";")
-    obstacles = []
-    robot_x, robot_y, direction = None
-
-    for data in split_str:
-        param = data.split(",")
-
-        if param[0].upper() == "ROBOT":
-            robot_x = int(param[1])
-            robot_y = int(param[2])
-            direction = param[3]
-        else:
-            obs_id = int(param[1])
-            obs_x = int(param[2])
-            obs_y = int(param[3])
-            obs_direction = param[4]
-        
-            obstacles.append((obs_id, obs_x, obs_y, obs_direction))
-
-    return (robot_x, robot_y, direction), obstacles
 
 @torch.no_grad()
 def run(weights='yolov5s.pt',  # model.pt path(s)
@@ -161,15 +138,13 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         while True:
             result = getAndroidData()
             if (result=="start"):
-
-                p = Planner()
                 android_data = getAndroidData()
-                (robot_x, robot_y, robot_direction), obstacles = preprocess(android_data)
-                C.set_robot_pos(robot_x, robot_y, robot_direction)
+                runner = Runner(android_data) # android_data is the raw string from android
+                instructions, android_coor = runner.run()
 
-                instructions = p.run(obstacles)
-                destination = "stm"
-                sendData(instructions, destination)
+                sendData(instructions, "stm")
+                sendData(android_coor, "android")
+                
                 break
 
     
