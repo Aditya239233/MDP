@@ -83,6 +83,7 @@
             android:layout_height="80dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/rounded_corner"
+            app:backgroundTint="@color/black"
             android:text="Set Start Point"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,12 +93,20 @@
             app:layout_constraintVertical_bias="0.081" />
 
         <Button
+            android:id="@+id/startButton"
+            android:layout_width="125dp"
+            android:layout_height="41dp"
+            app:backgroundTint="@color/navy"
+            android:text="start" />
+
+        <Button
             android:id="@+id/button11"
             android:layout_width="120dp"
             android:layout_height="80dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/rounded_corner"
             android:text="Reset Map"
+            app:backgroundTint="@color/colorRed"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.945"
@@ -109,8 +118,8 @@
             android:id="@+id/statusBox"
             android:layout_width="match_parent"
             android:layout_height="126dp"
-            android:text="TextView"
-            android:scrollbars = "vertical"/>
+            android:scrollbars="vertical"
+            android:text="TextView" />
 
     </LinearLayout>
 

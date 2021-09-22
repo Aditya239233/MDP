@@ -84,6 +84,7 @@ public class arena_map extends AppCompatActivity {
 
         Button set_robot = findViewById(R.id.button10);
         Button reset_map = findViewById(R.id.button11);
+        Button startButton = findViewById(R.id.startButton);
 
         reset_map.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -98,6 +99,13 @@ public class arena_map extends AppCompatActivity {
             public void onClick(View view) {
                 Arena tempArenaMap = arena_map.getArenaMap();
                 tempArenaMap.setStartingPoint(true);
+            }
+        });
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }

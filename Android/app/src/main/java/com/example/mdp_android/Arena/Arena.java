@@ -849,7 +849,7 @@ public class Arena extends View implements Serializable {
     }
 
     public void setRobotLocation(int column, int row, String direction) {
-        resetArena();
+//        resetArena();
         robotDirection = direction;
         setCurCoord(column, row);
         invalidate();
