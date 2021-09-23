@@ -17,4 +17,4 @@ class Car_C:
     TOL_SPACE = 6.0  # camera space
 
 
-    START_POS = 15, 3, Angle.NINETY_DEG # Default starting pos    
+    START_POS = 1, 1, Angle.NINETY_DEG # Default starting pos    

@@ -1,35 +1,36 @@
 from utils.angles import Angle
 
 # Test
+# x,y lies in [0, 20]
 class TestSet:
 
     # Test 1
-    obstacles = [[32, 31, Angle.ONE_EIGHTY_DEG],
-    [18, 16, Angle.ZERO_DEG],
-    [9, 33, Angle.TWO_SEVENTY_DEG],
-    [17, 24, Angle.ONE_EIGHTY_DEG],
-    [28, 21, Angle.NINETY_DEG]]
+    obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],
+    [10, 8, Angle.ZERO_DEG],
+    [9, 17, Angle.TWO_SEVENTY_DEG],
+    [9, 12, Angle.ONE_EIGHTY_DEG],
+    [14, 10, Angle.NINETY_DEG]]
 
 
     # Test 2
-    # obstacles = [[10,14,Angle.TWO_SEVENTY_DEG],
-    # [20,14,Angle.TWO_SEVENTY_DEG],
-    # [30, 22,Angle.ZERO_DEG],
-    # [10,22,Angle.NINETY_DEG],
-    # [20,22,Angle.NINETY_DEG]]
+    # obstacles = [[5, 7, Angle.TWO_SEVENTY_DEG],
+    # [10, 14, Angle.TWO_SEVENTY_DEG],
+    # [15, 11, Angle.ZERO_DEG],
+    # [5, 11, Angle.NINETY_DEG],
+    # [10, 11, Angle.NINETY_DEG]]
 
 
     # Test 3
-    # obstacles = [[10,8,Angle.ONE_EIGHTY_DEG],
-    # [10,16,Angle.ONE_EIGHTY_DEG],
-    # [10, 24,Angle.ONE_EIGHTY_DEG],
-    # [10,30,Angle.ONE_EIGHTY_DEG],
-    # [10,36,Angle.ONE_EIGHTY_DEG]]
+    # obstacles = [[10,4,Angle.ONE_EIGHTY_DEG],
+    # [10,8,Angle.ONE_EIGHTY_DEG],
+    # [10,12,Angle.ONE_EIGHTY_DEG],
+    # [10,15,Angle.ONE_EIGHTY_DEG],
+    # [10,18,Angle.ONE_EIGHTY_DEG]]
 
 
     # Test 4
-    # obstacles = [[32, 31, Angle.ONE_EIGHTY_DEG],
-    # [18, 16, Angle.ZERO_DEG],
-    # [9, 33, Angle.TWO_SEVENTY_DEG],
-    # [17, 24, Angle.ONE_EIGHTY_DEG],
-    # [28, 16, Angle.ZERO_DEG]]
+    # obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],
+    # [9, 8, Angle.ZERO_DEG],
+    # [9, 15, Angle.TWO_SEVENTY_DEG],
+    # [17, 12, Angle.ONE_EIGHTY_DEG],
+    # [14, 16, Angle.ZERO_DEG]]

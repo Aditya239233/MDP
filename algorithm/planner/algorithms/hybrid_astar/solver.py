@@ -14,6 +14,8 @@ from entity.arena import Arena
 # The parameters of the car (inc start position) are defined in utils.C
 def solve(arena: Arena):
 
+    arena.process()
+
     obstacles = arena.get_obstacles()
     print("Obstacles obtained")
     print(obstacles, "\n")

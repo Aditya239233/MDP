@@ -1,9 +1,15 @@
+from utils.helpers import get_direction_from_angle
+from typing import List
 from testset import TestSet
 from algorithms.hybrid_astar.solver import solve
 from utils.translate import translate_tour
 from entity.obstacle import Obstacle
 from entity.arena import Arena
 from utils.car_utils import Car_C
+
+# Planner class for the Flask server
+# Does not support string-to-pos translation
+# Takes in a list of obstacles (in tuples) - no obs id is needed
 class Planner:
     
     def __init__(self):
@@ -89,19 +95,32 @@ class Planner:
 if __name__ == "__main__":
 
     def print_instructions(instructions):
+        if instructions == None:
+            return
+
         for i in instructions:
             print(i)
+    
+    def print_real_obs_coor(obstacles: List[List]):
+        scale = 10
+        for obs in obstacles:
+            x = obs[0] * scale
+            y = obs[1] * scale
+            direction = get_direction_from_angle(obs[2])
+            print(f"({x}, {y}, {direction})")
 
     p = Planner()
     obstacles = TestSet.obstacles
+    print_real_obs_coor(obstacles)
+
     arena = p.init_arena(obstacles)
     job_id = p.run_job()
     instructions = p.get_instructions(job_id)
     print_instructions(instructions)
 
-    tour = p.get_tour_from_job(job_id)
-    from algorithms.hybrid_astar.simulate import simulate
-    simulate(tour, arena, save_gif=True, gif_name="./results/gif/apollo1.gif")
+    # tour = p.get_tour_from_job(job_id)
+    # from algorithms.hybrid_astar.simulate import simulate
+    # simulate(tour, arena, save_gif=True, gif_name="./results/gif/apollo1.gif")
     # for path in tour:
     #     for i in range(len(path.x)):
     #         print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")

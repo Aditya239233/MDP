@@ -1,5 +1,4 @@
-from utils.angles import Angle
-from utils.arena_utils import Arena_C
+from utils.helpers import convert_val_to_sim
 
 class Obstacle:
 
@@ -11,8 +10,8 @@ class Obstacle:
         self.img_id = id
 
     def translate_val_to_sim(self):
-        self.x += Arena_C.OFFSET_X
-        self.y += Arena_C.OFFSET_Y
+        self.x = convert_val_to_sim(self.x)
+        self.y = convert_val_to_sim(self.y)
 
     
     def __str__(self):

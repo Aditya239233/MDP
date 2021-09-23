@@ -2,6 +2,7 @@ from typing import List
 from entity.obstacle import Obstacle
 from utils.angles import Angle
 from utils.arena_utils import Arena_C
+from utils.helpers import convert_val_to_sim
 from .obstacle import Obstacle
 
 # Package all the information about the arena in a class
@@ -33,8 +34,8 @@ class Arena:
             obs.translate_val_to_sim()
         
         s_x, s_y, direction = self.start_pos
-        s_x += Arena_C.OFFSET_X
-        s_y += Arena_C.OFFSET_Y
+        s_x = convert_val_to_sim(s_x)
+        s_y = convert_val_to_sim(s_y)
 
         self.start_pos = (s_x, s_y, direction)
         self.processed = True

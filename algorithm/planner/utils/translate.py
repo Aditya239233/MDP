@@ -1,9 +1,8 @@
-import pickle
+from utils.helpers import convert_sim_to_val
 import math
 
 from numpy import add
 from entity.path import Path
-from utils.angles import Angle
 
 SPEED = 0.01 #unit/ms
 ROT_TIME = 592.056388302 #ms/rad
@@ -208,7 +207,17 @@ def translate(path):
     
 
     return instructions, pos_after_instruction
-        
+
+def process_android_coor(coors):
+    new_list = []
+
+    for coor in coors:
+        x, y, yaw = coor
+        x = convert_sim_to_val(x)
+        y = convert_sim_to_val(y)
+        new_list.append((x, y, yaw))
+
+    return new_list
 
 def translate_tour(tour, tour_seq):
     list_of_instructions = []
@@ -218,6 +227,8 @@ def translate_tour(tour, tour_seq):
 
     for path in tour:
         instructions, android_coor = translate(path)
+        android_coor = process_android_coor(android_coor)
+
         instructions.append(f"C{tour_seq[i]}")  # car stop and do image recognition
 
         list_of_instructions.append(instructions)
