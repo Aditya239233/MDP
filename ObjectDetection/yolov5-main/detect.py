@@ -135,18 +135,25 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         print("in rpi")
         from PiTransmitter import sendData,getAndroidData
         
-        while True:
-            result = getAndroidData()
-            if (result=="start"):
-                android_data = getAndroidData()
-                runner = Runner(android_data) # android_data is the raw string from android
-                instructions, android_coor = runner.run()
+        # while True:
+        #     result = getAndroidData()
+        #     if (result=="start"):
+        #         android_data = getAndroidData()
+        #         runner = Runner(android_data) # android_data is the raw string from android
+        #         instructions, android_coor = runner.run()
 
-                sendData(instructions, "stm")
-                sendData(android_coor, "android")
+        #         sendData(instructions, "stm")
+        #         sendData(android_coor, "android")
                 
-                break
+        #         break
 
+    android_data = getAndroidData()
+    runner = Runner(android_data) # android_data is the raw string from android
+    instructions, android_coor = runner.run()
+
+    sendData(instructions, "stm")
+    sendData(android_coor, "android")
+            
     
 
 
