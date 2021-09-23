@@ -23,6 +23,7 @@ import torch
 import torch.backends.cudnn as cudnn
 
 from algorithm.planner.main import Runner
+from PiTransmitter import sendData,getAndroidData
 
 FILE = Path(__file__).absolute()
 sys.path.append(FILE.parents[0].as_posix())  # add yolov5/ to path
@@ -133,7 +134,6 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 
     if(source=='1'):#rpi
         print("in rpi")
-        from PiTransmitter import sendData,getAndroidData
         
         # while True:
         #     result = getAndroidData()
