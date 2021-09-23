@@ -59,111 +59,73 @@ def get_car_motion(direction, steer):
     
     return motion
 
-# detect a trend of negative to positive values
-def neg_to_pos(section):
-    pos = False
 
-    # check if first part is negative
-    if not (section[0][3] < 0):
-        return False
-    
-    # find the part with positive values
-    for i in range(1, len(section)):
-        if section[i][3] >= 0:
-            pos = True
-            break
-    
-    return pos
+def get_angle(motion, section):
+    if motion == "df" or motion == "ar": # in clockwise direction - angle should decrease
+        start_angle = prev_angle = section[0][3]
+        for i in range(1, len(section)):
+            curr_angle = section[i][3]
+            if curr_angle - prev_angle > math.pi:  # more relaxed checking - only detects entrance of 1st/4th quadrant
+                curr_angle -= TWO_PI
 
-# detect a trend of positive to negative values
-def pos_to_neg(section):
-    neg = False
+            prev_angle = curr_angle
 
-    # check if first part is positive
-    if not (section[0][3] >= 0):
-        return False
-    
-    # find the part with negative values
-    for i in range(1, len(section)):
-        if section[i][3] < 0:
-            neg = True
-            break
-    
-    return neg
+        end_angle = curr_angle
 
-# detect a trend of positive to negative to positive values
-def pos_to_neg_to_pos(section):
-    pos = False
-    neg_index = 1
+    elif motion == "dr" or motion == "af": # in anticlockwise direction - angle should increase
+        start_angle = prev_angle = section[0][3]
+        for i in range(1, len(section)):
+            curr_angle = section[i][3]
+            if curr_angle - prev_angle < -math.pi:
+                curr_angle += TWO_PI
 
-    if not (section[0][3] >= 0):
-        return False
-    
-    while neg_index < len(section) and section[neg_index][3] >= 0:
-        neg_index += 1
-    
-    if neg_index == len(section):
-        return False
-    
-    for i in range(neg_index, len(section)):
-        if section[i][3] >= 0:
-            pos = True
-            break
-    
-    return pos
+            prev_angle = curr_angle
 
-# detect a trend of negative to positive to negative values
-def neg_to_pos_to_neg(section):
-    neg = False
-    pos_index = 1
+        end_angle = curr_angle
 
-    if not (section[0][3] < 0):
-        return False
-    
-    while pos_index < len(section) and section[pos_index][3] < 0:
-        pos_index += 1
-    
-    if pos_index == len(section):
-        return False
-    
-    for i in range(pos_index, len(section)):
-        if section[i][3] < 0:
-            neg = True
-            break
-    
-    return neg
-
-
-def get_angle(section):
-    steer = section[0][4]
-    start_angle = section[0][3]
-    end_angle = section[-1][3]
-
-    motion = get_car_motion(section[0][2], section[0][4])
-    
-    if motion == "df" or motion == "ar": # in clockwise direction
-        if neg_to_pos(section) or pos_to_neg_to_pos(section):
-            end_angle = section[-1][3] - TWO_PI
-
-    elif motion == "dr" or motion == "af": # in anticlockwise direction
-        if pos_to_neg(section) or neg_to_pos_to_neg(section):
-            end_angle = section[-1][3] + TWO_PI
 
     return abs(end_angle - start_angle)
 
 
 def get_instruction(section):
-    motion = get_car_motion(section[0][2], section[0][4])
+    direction = section[0][2]
+    steer = section[0][4]
+    motion = get_car_motion(direction, steer)
 
     if motion == "w" or motion == "s":
         dist = calculate_dist(section)
         dt = dist / SPEED
         return f"{motion}{dt :04.0f}"
     else:
-        angle = get_angle(section)
+        angle = get_angle(motion, section)
         dt = angle * ROT_TIME
         return f"{motion}{dt :04.0f}"
+
+# Some yaw are negative, so convert those positive
+def get_base_angle(angle):
+    if angle >= 0 and angle < TWO_PI:
+        return angle
     
+    while angle >= TWO_PI:
+        angle -= TWO_PI
+    
+    while angle < 0:
+        angle += TWO_PI
+    
+    return angle
+
+
+def check_and_fix_anomalies(path):
+    # Sometimes, the sign of steer will be wrong - can detect through a window of size 3 on the yaw value
+    inner_array_index = range(1, len(path.x)-1) # [1, length-1]
+
+    for i in inner_array_index:
+        path.yaw[i] = get_base_angle(path.yaw[i])
+
+    # check for anomalies in steer (-ve +ve -ve or +ve -ve +ve)
+    for i in inner_array_index:
+        if same_sign(path.steer[i-1], path.steer[i+1]) and not same_sign(path.steer[i], path.steer[i+1]):
+            path.steer[i] *= -1
 
 
 def translate(path):
@@ -172,10 +134,8 @@ def translate(path):
     instructions = []
     curr_section = []
 
-    # check for anomalies in steer (-ve +ve -ve or +ve -ve +ve)
-    for i in range(1, len(path.x)-1):
-        if same_sign(path.steer[i-1], path.steer[i+1]) and not same_sign(path.steer[i], path.steer[i+1]):
-            path.steer[i] *= -1
+    check_and_fix_anomalies(path)
+
 
     x, y, direction, yaw, steer = path.x[0], path.y[0], path.direction[0], path.yaw[0], path.steer[0]
     prev_motion = get_car_motion(direction, steer)
@@ -237,3 +197,99 @@ def translate_tour(tour, tour_seq):
         i += 1
 
     return list_of_instructions, list_of_coor
+
+
+
+
+# UNUSED
+# detect a trend of negative to positive values
+# def neg_to_pos(section):
+#     pos = False
+
+#     # check if first part is negative
+#     if not (section[0][3] < 0):
+#         return False
+    
+#     # find the part with positive values
+#     for i in range(1, len(section)):
+#         if section[i][3] >= 0:
+#             pos = True
+#             break
+    
+#     return pos
+
+# # detect a trend of positive to negative values
+# def pos_to_neg(section):
+#     neg = False
+
+#     # check if first part is positive
+#     if not (section[0][3] >= 0):
+#         return False
+    
+#     # find the part with negative values
+#     for i in range(1, len(section)):
+#         if section[i][3] < 0:
+#             neg = True
+#             break
+    
+#     return neg
+
+# # detect a trend of positive to negative to positive values
+# def pos_to_neg_to_pos(section):
+#     pos = False
+#     neg_index = 1
+
+#     if not (section[0][3] >= 0):
+#         return False
+    
+#     while neg_index < len(section) and section[neg_index][3] >= 0:
+#         neg_index += 1
+    
+#     if neg_index == len(section):
+#         return False
+    
+#     for i in range(neg_index, len(section)):
+#         if section[i][3] >= 0:
+#             pos = True
+#             break
+    
+#     return pos
+
+# # detect a trend of negative to positive to negative values
+# def neg_to_pos_to_neg(section):
+#     neg = False
+#     pos_index = 1
+
+#     if not (section[0][3] < 0):
+#         return False
+    
+#     while pos_index < len(section) and section[pos_index][3] < 0:
+#         pos_index += 1
+    
+#     if pos_index == len(section):
+#         return False
+    
+#     for i in range(pos_index, len(section)):
+#         if section[i][3] < 0:
+#             neg = True
+#             break
+    
+#     return neg
+
+
+# def get_angle(section):
+#     steer = section[0][4]
+#     start_angle = section[0][3]
+#     end_angle = section[-1][3]
+
+#     motion = get_car_motion(section[0][2], section[0][4])
+    
+#     if motion == "df" or motion == "ar": # in clockwise direction
+#         if neg_to_pos(section) or pos_to_neg_to_pos(section):
+#             end_angle = section[-1][3] - TWO_PI
+
+#     elif motion == "dr" or motion == "af": # in anticlockwise direction
+#         if pos_to_neg(section) or neg_to_pos_to_neg(section):
+#             end_angle = section[-1][3] + TWO_PI
+
+#     return abs(end_angle - start_angle)
