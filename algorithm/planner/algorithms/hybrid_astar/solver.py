@@ -23,7 +23,7 @@ def solve(arena: Arena):
     ox, oy, _, _ = arena.design_obstacles()
     print("Obstacle drawn")
 
-    waypoint_dict = graph.generate_waypoints(arena.get_start_pos(), obstacles)
+    waypoint_dict = graph.generate_waypoints(arena.get_start_pos(), obstacles, sideways=False)
     print("Waypoints generated")
 
     try:

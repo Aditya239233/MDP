@@ -10,7 +10,7 @@ from itertools import permutations
 
 # Given the obstacles, set the car's position in front of the obstacles as waypoints
 # Then, these waypoints are treated as nodes of the path graph
-def generate_waypoints(start_pos, obstacles):
+def generate_waypoints(start_pos, obstacles, sideways=False):
     waypoints = {-1: start_pos} #start_pos - (x, y, direction)
 
     for obstacle in obstacles:
@@ -19,27 +19,49 @@ def generate_waypoints(start_pos, obstacles):
         face = obstacle.face
         obs_id = obstacle.img_id
 
-        if face == Angle.ZERO_DEG:
-            w_x = x1 + Arena_C.OBS_LENGTH + Car_C.TOL_SPACE
-            w_y = y1 + Arena_C.OBS_LENGTH // 2
-            w_face = Angle.ONE_EIGHTY_DEG
+        if not sideways:
+            if face == Angle.ZERO_DEG: # E
+                w_x = x1 + Arena_C.OBS_LENGTH + Car_C.TOL_SPACE
+                w_y = y1 + Arena_C.OBS_LENGTH // 2
+                w_face = Angle.ONE_EIGHTY_DEG
 
-        elif face == Angle.ONE_EIGHTY_DEG:
-            w_x = x1 - Car_C.TOL_SPACE
-            w_y = y1 + Arena_C.OBS_LENGTH // 2
-            w_face = Angle.ZERO_DEG
+            elif face == Angle.ONE_EIGHTY_DEG: # W
+                w_x = x1 - Car_C.TOL_SPACE
+                w_y = y1 + Arena_C.OBS_LENGTH // 2
+                w_face = Angle.ZERO_DEG
 
-        elif face == Angle.NINETY_DEG:
-            w_x = x1 + Arena_C.OBS_LENGTH // 2
-            w_y = y1 + Arena_C.OBS_LENGTH + Car_C.TOL_SPACE
-            w_face = Angle.TWO_SEVENTY_DEG
+            elif face == Angle.NINETY_DEG: # N
+                w_x = x1 + Arena_C.OBS_LENGTH // 2
+                w_y = y1 + Arena_C.OBS_LENGTH + Car_C.TOL_SPACE
+                w_face = Angle.TWO_SEVENTY_DEG
 
-        elif face == Angle.TWO_SEVENTY_DEG:
-            w_x = x1 + Arena_C.OBS_LENGTH // 2
-            w_y = y1 - Car_C.TOL_SPACE
-            w_face = Angle.NINETY_DEG
-    
+            elif face == Angle.TWO_SEVENTY_DEG: # S
+                w_x = x1 + Arena_C.OBS_LENGTH // 2
+                w_y = y1 - Car_C.TOL_SPACE
+                w_face = Angle.NINETY_DEG
+        else:
+            if face == Angle.ZERO_DEG: # E
+                w_x = x1 + Arena_C.OBS_LENGTH + Car_C.TOL_SPACE
+                w_y = y1 + Arena_C.OBS_LENGTH // 2 + (Car_C.ACTUAL_CAR_LENGTH // 2 - Car_C.ACTUAL_RB)
+                w_face = Angle.TWO_SEVENTY_DEG
+
+            elif face == Angle.NINETY_DEG: # N
+                w_x = x1 + Arena_C.OBS_LENGTH // 2 - (Car_C.ACTUAL_CAR_LENGTH // 2 - Car_C.ACTUAL_RB)
+                w_y = y1 + Arena_C.OBS_LENGTH + Car_C.TOL_SPACE
+                w_face = Angle.ZERO_DEG
+
+            elif face == Angle.TWO_SEVENTY_DEG: # S
+                w_x = x1 + Arena_C.OBS_LENGTH // 2 + (Car_C.ACTUAL_CAR_LENGTH // 2 - Car_C.ACTUAL_RB)
+                w_y = y1 - Car_C.TOL_SPACE
+                w_face = Angle.ONE_EIGHTY_DEG
+
+            elif face == Angle.ONE_EIGHTY_DEG: # W
+                w_x = x1 - Car_C.TOL_SPACE
+                w_y = y1 + Arena_C.OBS_LENGTH // 2 - (Car_C.ACTUAL_CAR_LENGTH // 2 - Car_C.ACTUAL_RB)
+                w_face = Angle.NINETY_DEG
+        
         waypoints[obs_id] = (w_x, w_y, w_face)
+        print(waypoints[obs_id])
 
     return waypoints
 

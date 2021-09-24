@@ -5,7 +5,7 @@ from numpy import add
 from entity.path import Path
 
 SPEED = 0.01 #unit/ms
-ROT_TIME = 592.056388302 #ms/rad
+ROT_TIME = 891.2676813 #ms/rad
 TWO_PI = 2 * math.pi
 
 # Check the longest sequence for:
@@ -117,13 +117,12 @@ def get_base_angle(angle):
 
 def check_and_fix_anomalies(path):
     # Sometimes, the sign of steer will be wrong - can detect through a window of size 3 on the yaw value
-    inner_array_index = range(1, len(path.x)-1) # [1, length-1]
 
-    for i in inner_array_index:
+    for i in range(0, len(path.x)-1):
         path.yaw[i] = get_base_angle(path.yaw[i])
 
     # check for anomalies in steer (-ve +ve -ve or +ve -ve +ve)
-    for i in inner_array_index:
+    for i in range(1, len(path.x)-1):
         if same_sign(path.steer[i-1], path.steer[i+1]) and not same_sign(path.steer[i], path.steer[i+1]):
             path.steer[i] *= -1
 
