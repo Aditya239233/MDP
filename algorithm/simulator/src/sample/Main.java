@@ -22,33 +22,33 @@ public class Main extends Application {
         launch(args);
     }
 
-    public void initializeObstacles(GridPane grid) {
-        ApiInterface inter = new ApiInterface();
-        ArrayList<Map> obstacles = inter.getObstacles();
-
-        for (Map obs : obstacles) {
-            Rectangle r = new Rectangle();
-            r.setWidth(20);
-            r.setHeight(20);
-
-            switch (obs.get("direction").toString()) {
-                case "N":
-                    r.setStyle("-fx-fill: linear-gradient(to top,#000000 80%, #FF0000 1%)");
-                    break;
-                case "E":
-                    r.setStyle("-fx-fill: linear-gradient(to right,#000000 80%, #FF0000 1%)");
-                    break;
-                case "S":
-                    r.setStyle("-fx-fill: linear-gradient(to bottom,#000000 80%, #FF0000 1%)");
-                    break;
-                case "W":
-                    r.setStyle("-fx-fill: linear-gradient(to left,#000000 80%, #FF0000 1%)");
-                    break;
-            }
-            grid.add(r, (int) obs.get("x"), (int) obs.get("y"));
-        }
-
-    }
+//    public void initializeObstacles(GridPane grid) {
+//        ApiInterface inter = new ApiInterface();
+//        ArrayList<Map> obstacles = inter.getObstacles("s");
+//
+//        for (Map obs : obstacles) {
+//            Rectangle r = new Rectangle();
+//            r.setWidth(20);
+//            r.setHeight(20);
+//
+//            switch (obs.get("direction").toString()) {
+//                case "N":
+//                    r.setStyle("-fx-fill: linear-gradient(to top,#000000 80%, #FF0000 1%)");
+//                    break;
+//                case "E":
+//                    r.setStyle("-fx-fill: linear-gradient(to right,#000000 80%, #FF0000 1%)");
+//                    break;
+//                case "S":
+//                    r.setStyle("-fx-fill: linear-gradient(to bottom,#000000 80%, #FF0000 1%)");
+//                    break;
+//                case "W":
+//                    r.setStyle("-fx-fill: linear-gradient(to left,#000000 80%, #FF0000 1%)");
+//                    break;
+//            }
+//            grid.add(r, (int) obs.get("x"), (int) obs.get("y"));
+//        }
+//
+//    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -75,8 +75,8 @@ public class Main extends Application {
         stage.setTitle("Playing with FX");
         stage.setScene(scene);
 
-        GridPane grid = (GridPane) scene.lookup("#grid");
-        initializeObstacles(grid);
+//        GridPane grid = (GridPane) scene.lookup("#grid");
+//        initializeObstacles(grid);
 
 
         stage.show();

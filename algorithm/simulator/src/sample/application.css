@@ -11,5 +11,6 @@
 }
 
 .path {
-    -fx-stroke: "black";
+    /*-fx-stroke: Color.RED;*/
+    -fx-stroke-width: 2.0;
 }

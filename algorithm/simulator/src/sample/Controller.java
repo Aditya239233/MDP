@@ -4,27 +4,47 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class Controller {
+
+
+
+
     @FXML
     private ImageView robot;
-    //    @FXML
-//    private Polygon direction;
+    @FXML
+    private VBox idList;
     @FXML
     private Button forward;
     @FXML
     private Button reverse;
+
+    @FXML
+    private TextField obstacles;
+
+    @FXML
+    private TextField job_id;
+
+    @FXML
+    private Button playCoord;
+    @FXML
+    private Button playId;
 
 
     @FXML
@@ -32,6 +52,7 @@ public class Controller {
 
     @FXML
     private AnchorPane pane;
+
 
     private String robot_direction = "N";
 
@@ -182,27 +203,105 @@ public class Controller {
 
     }
 
-    public void path(ActionEvent e) {
+    public void visualiseObstacles(ActionEvent e) {
+        String coordinatesStr = obstacles.getText();
+        showObstacles(coordinatesStr);
+    }
+    private void showObstacles(String coordStr) {
         ApiInterface inter = new ApiInterface();
-        ArrayList<ArrayList<Double>> route = inter.getPath();
+        ArrayList<Map> obstacles = inter.getObstacles(coordStr);
+        int i = 0;
+        Scene scene = grid.getScene();
+        grid.getChildren().removeAll(scene.lookup("#obs0"), scene.lookup("#obs1"), scene.lookup("#obs2"), scene.lookup("#obs3"), scene.lookup("#obs4"));
+        for (Map obs : obstacles) {
+            Rectangle r = new Rectangle();
+            r.setWidth(20);
+            r.setHeight(20);
 
+            switch (obs.get("direction").toString()) {
+                case "N":
+                    r.setStyle("-fx-fill: linear-gradient(to top,#000000 80%, #FF0000 1%)");
+                    break;
+                case "E":
+                    r.setStyle("-fx-fill: linear-gradient(to right,#000000 80%, #FF0000 1%)");
+                    break;
+                case "S":
+                    r.setStyle("-fx-fill: linear-gradient(to bottom,#000000 80%, #FF0000 1%)");
+                    break;
+                case "W":
+                    r.setStyle("-fx-fill: linear-gradient(to left,#000000 80%, #FF0000 1%)");
+                    break;
+            }
+            r.setId("obs" + String.valueOf((i)));
+            i++;
+
+            grid.add(r, (int) obs.get("x"), (int) obs.get("y"));
+        }
+
+
+    }
+
+
+
+    public void getPath(ActionEvent e) {
+
+        String playType = ((Node) e.getSource()).getId();
+
+        ApiInterface inter = new ApiInterface();
+        ApiInterface.RobotPath path;
+        ArrayList<ArrayList<Double>> route;
+
+        if (playType.equals("playCoord")) {
+            String coordinatesStr = obstacles.getText();
+            showObstacles(coordinatesStr);
+            path = inter.getPath(coordinatesStr);
+            System.out.println(path.id);
+            route = path.data;
+            Text t = new Text();
+            t.setText(String.valueOf(path.id) + ": " + coordinatesStr);
+            idList.getChildren().add(t);
+//            idList.setText(String.valueOf(path.id) + ": " + coordinatesStr);
+
+        } else {
+            String id = job_id.getText();
+            route = inter.getPathById(id);
+        }
+
+
+
+        if (route == null) {
+            System.out.println("No path found!");
+            return;
+        }
+        playPath(route);
+    }
+
+
+    public void replayPath(ActionEvent e) {
+        ApiInterface inter = new ApiInterface();
+        ArrayList<ArrayList<Double>> route = inter.replayPath();
+        if (route == null) {
+            System.out.println("No path found!");
+            return;
+        }
+        playPath(route);
+    }
+
+    public void playPath(ArrayList<ArrayList<Double>> route) {
+
+        pane.getChildren().remove(pane.lookup("#path"));
         Path path = new Path();
+
+
         path.setStroke(Color.RED);
-        path.setStrokeWidth(1.0);
+//        path.setStrokeWidth(1.0);
 
         MoveTo moveTo = new MoveTo();
-        moveTo.setX(route.get(0).get(0) *10 -20.0);
-        moveTo.setY(route.get(0).get(1) *-10 +20);
+        moveTo.setX((route.get(0).get(0)) *10 -120.0);
+        moveTo.setY((route.get(0).get(1))*-10 +120);
         path.getElements().add(moveTo);
         path.setLayoutX(20);
         path.setLayoutY(380);
-
-
-
-
-
-
-
 
 
         Timeline timeline = new Timeline();
@@ -215,8 +314,8 @@ public class Controller {
                 continue;
             }
 
-            double x = c.get(0) *10 -20;
-            double y = c.get(1) *-10 +20;
+            double x = c.get(0) *10 -120;
+            double y = c.get(1) *-10 +120;
 
 
             LineTo lineTo = new LineTo();
@@ -231,25 +330,26 @@ public class Controller {
                 rotate = rotate -360;
             }
             KeyValue kv = new KeyValue(robot.rotateProperty(), rotate );
-            KeyValue kv2 = new KeyValue(robot.translateXProperty(), c.get(0) *10 -20.0);
-            KeyValue kv3 = new KeyValue(robot.translateYProperty(), c.get(1) *-10 +20);
+            KeyValue kv2 = new KeyValue(robot.translateXProperty(), c.get(0) *10 -120.0);
+            KeyValue kv3 = new KeyValue(robot.translateYProperty(), c.get(1) *-10 +120);
             KeyFrame kf = new KeyFrame(Duration.millis(i), kv, kv2,kv3);
             timeline.getKeyFrames().add(kf);
             i += 100;
 //            path.getElements().add(new LineTo(c[0], c[1]));
 //            robot.setRotate(c[2]);
         }
+        path.setId("path");
         pane.getChildren().add(path);
         timeline.play();
 //        System.out.println(path);
-        PathTransition transition = new PathTransition();
+//        PathTransition transition = new PathTransition();
+//
+//        transition.setDuration(Duration.seconds(10));
+////        transition.setNode(forward);
+//        transition.setPath(path);
+//        transition.setAutoReverse(false);
 
-        transition.setDuration(Duration.seconds(10));
-        transition.setNode(forward);
-        transition.setPath(path);
-        transition.setAutoReverse(false);
-
-        transition.play();
+//        transition.play();
 //        printLocation();
 //
 //        RotateTransition rt = new RotateTransition(Duration.seconds(10), robot);
@@ -260,4 +360,7 @@ public class Controller {
 
 
     }
+
+
+
 }

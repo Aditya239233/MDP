@@ -25,6 +25,13 @@ def get_path_coor():
     json_dump = json.dumps(data)
     return Response(json_dump, mimetype='application/json; charset=utf-8')
 
+@app.route('/from-id/', methods=['GET'])
+def get_path_from_id():
+    job_id = int(request.args.get("id"))
+    data = {'status': "success", "data": planner.get_path(job_id), "id": job_id}
+    json_dump = json.dumps(data)
+    return Response(json_dump, mimetype='application/json; charset=utf-8')
+
 
 @app.route('/get-instructions/', methods=['GET'])
 def get_instructions():
