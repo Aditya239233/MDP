@@ -8,6 +8,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
+        android:background="@drawable/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -140,10 +141,12 @@
 
                 <TextView
                     android:id="@+id/statusBox"
-                    android:layout_width="match_parent"
+                    android:layout_width="300dp"
                     android:layout_height="126dp"
                     android:scrollbars="vertical"
-                    android:text="TextView" />
+                    android:gravity="bottom"
+                    android:text=""
+                    android:background="@drawable/border_black_background"/>
 
             </LinearLayout>
         </LinearLayout>

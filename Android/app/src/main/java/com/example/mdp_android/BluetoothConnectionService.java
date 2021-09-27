@@ -27,7 +27,7 @@ public class BluetoothConnectionService {
     private final BluetoothAdapter mBluetoothAdapter;
     Context mContext;
 
-    private AcceptThread mInsecureAcceptThread;
+//    private AcceptThread mInsecureAcceptThread;
 
     private ConnectThread mConnectThread;
     private BluetoothDevice mDevice;
@@ -41,43 +41,43 @@ public class BluetoothConnectionService {
     public BluetoothConnectionService(Context context) {
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.mContext = context;
-        startAcceptThread();
+//        startAcceptThread();
     }
 
 
-    private class AcceptThread extends Thread {
-        private final BluetoothServerSocket ServerSocket;
-
-        public AcceptThread() {
-            BluetoothServerSocket tmp = null;
-
-            try {
-                tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, myUUID);
-            } catch (IOException ignored) {
-            }
-            ServerSocket = tmp;
-        }
-
-        public void run() {
-            BluetoothSocket socket = null;
-            try {
-                socket = ServerSocket.accept();
-            } catch (IOException ignored) {
-            }
-
-            if (socket != null) {
-                connected(socket, socket.getRemoteDevice());
-            }
-        }
-
-        public void cancel() {
-            try {
-                ServerSocket.close();
-            } catch (IOException ignored) {
-            }
-        }
-
-    }
+//    private class AcceptThread extends Thread {
+//        private final BluetoothServerSocket ServerSocket;
+//
+//        public AcceptThread() {
+//            BluetoothServerSocket tmp = null;
+//
+//            try {
+//                tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, myUUID);
+//            } catch (IOException ignored) {
+//            }
+//            ServerSocket = tmp;
+//        }
+//
+//        public void run() {
+//            BluetoothSocket socket = null;
+//            try {
+//                socket = ServerSocket.accept();
+//            } catch (IOException ignored) {
+//            }
+//
+//            if (socket != null) {
+//                connected(socket, socket.getRemoteDevice());
+//            }
+//        }
+//
+//        public void cancel() {
+//            try {
+//                ServerSocket.close();
+//            } catch (IOException ignored) {
+//            }
+//        }
+//
+//    }
 
     private class ConnectThread extends Thread {
         private BluetoothSocket mSocket;
@@ -132,17 +132,17 @@ public class BluetoothConnectionService {
         }
     }
 
-    public synchronized void startAcceptThread() {
-
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
-        }
-        if (mInsecureAcceptThread == null) {
-            mInsecureAcceptThread = new AcceptThread();
-            mInsecureAcceptThread.start();
-        }
-    }
+//    public synchronized void startAcceptThread() {
+//
+//        if (mConnectThread != null) {
+//            mConnectThread.cancel();
+//            mConnectThread = null;
+//        }
+//        if (mInsecureAcceptThread == null) {
+//            mInsecureAcceptThread = new AcceptThread();
+//            mInsecureAcceptThread.start();
+//        }
+//    }
 
     public void startClientThread(BluetoothDevice device, UUID uuid) {
         try {
@@ -218,10 +218,10 @@ public class BluetoothConnectionService {
 
     private void connected(BluetoothSocket mSocket, BluetoothDevice device) {
         mDevice = device;
-        if (mInsecureAcceptThread != null) {
-            mInsecureAcceptThread.cancel();
-            mInsecureAcceptThread = null;
-        }
+//        if (mInsecureAcceptThread != null) {
+//            mInsecureAcceptThread.cancel();
+//            mInsecureAcceptThread = null;
+//        }
 
         mConnectedThread = new ConnectedThread(mSocket);
         mConnectedThread.start();
