@@ -6,6 +6,9 @@ Usage:
     $ python path/to/detect.py --source path/to/img.jpg --weights yolov5s.pt --img 640
 """
 
+from algorithm.planner.main import Runner
+from yolov5.PiTransmitter import sendData,getAndroidData
+
 from config import WEIGHTSPATH, IMGCONF, CONF, SOURCE
 import argparse
 import sys
@@ -22,8 +25,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
-from algorithm.planner.main import Runner
-from yolov5.PiTransmitter import sendData,getAndroidData
+
 
 FILE = Path(__file__).absolute()
 sys.path.append(FILE.parents[0].as_posix())  # add yolov5/ to path
@@ -370,7 +372,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
                     label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                     if c+1==31:# if detected bulleye send over as 31 with obstacle ID as 100
                     	sendData(f"TARGET,100,31","android")
-                	else:
+                    else:
 	                    if conf >0:
 
 	                        print(f"{c}-{label}:confidence:{conf},width:{dwidth},height:{dheight},origin x:{origin_x}, origin y:{origin_y}")

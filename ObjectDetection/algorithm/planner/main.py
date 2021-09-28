@@ -1,12 +1,12 @@
 # For testing/running the algorithm
 from algorithm.planner.utils.translate import translate_tour
-from utils.helpers import get_angle_from_direction
-from utils.arena_utils import Arena_C
+from algorithm.planner.utils.helpers import get_angle_from_direction
+from algorithm.planner.utils.arena_utils import Arena_C
 
-from entity.arena import Arena
-from entity.obstacle import Obstacle
-from algorithms.hybrid_astar.solver import solve
-from algorithms.hybrid_astar.simulate import simulate
+from algorithm.planner.entity.arena import Arena
+from algorithm.planner.entity.obstacle import Obstacle
+from algorithm.planner.algorithms.hybrid_astar.solver import solve
+from algorithm.planner.algorithms.hybrid_astar.simulate import simulate
 
 # For running Task 1.
 # This class is designed to run only once
