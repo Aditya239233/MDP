@@ -60,6 +60,6 @@ class Runner:
 if __name__ == "__main__":
     data_str = "ROBOT,1,1,N;OBSTACLE,1,11,10,W;OBSTACLE,2,0,5,N;OBSTACLE,3,6,18,S"
     runner = Runner(data_str)
-    instructions, android_coor = runner.run(to_simulate=True)
+    instructions, android_coor = runner.run(to_simulate=False)
     print(instructions)
     print(android_coor)
