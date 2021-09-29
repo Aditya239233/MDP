@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
     tour = p.get_tour_from_job(job_id)
     from algorithms.hybrid_astar.simulate import simulate
-    simulate(tour, arena, save_gif=True, gif_name="./results/gif/apollo2.gif")
+    simulate(tour, arena, save_gif=True, gif_name="./apollo2.gif")
     for path in tour:
         for i in range(len(path.x)):
             print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")

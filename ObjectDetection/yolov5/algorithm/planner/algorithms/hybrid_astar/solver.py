@@ -102,5 +102,7 @@ def solve(arena: Arena):
         path.direction.append(direction)
         path.steer.append(steer)
 
+        obs_index += 1
+
     print("Tour returned")
     return paths, tour_sequence

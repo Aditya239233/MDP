@@ -5,7 +5,14 @@ from algorithm.planner.utils.angles import Angle
 class TestSet:
 
     # Test 0
-    obstacles = [[6,6,Angle.NINETY_DEG]]
+    obstacles = [[6,6,Angle.NINETY_DEG], [2,12,Angle.NINETY_DEG]]
+
+    # Test 0.1
+    # obstacles = [[2,12,Angle.NINETY_DEG],
+    #     [6,5,Angle.NINETY_DEG],
+    #     [8,13, Angle.NINETY_DEG],
+    #     [12,6, Angle.NINETY_DEG]]
+
     # Test 1
     # obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],
     # [10, 8, Angle.ZERO_DEG],

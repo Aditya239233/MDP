@@ -72,7 +72,7 @@ def simulate(tour: List[Path], arena:Arena,
         plt.grid(b=True)
 
         if save_gif:
-            filename = f"./results/temp/{k}.png"
+            filename = f"./{k}.png"
             filenames.append(filename)
             plt.savefig(filename)
             plt.close()
