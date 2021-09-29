@@ -21,7 +21,7 @@ public class BluetoothConnectionService {
 
     private static final String appName = "MDP_Group_26";
     //    public static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    public static final UUID myUUID = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
+    public static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String TAG = "BluetoothConnectionServ";
     public static BluetoothDevice mBTDevice;
     private final BluetoothAdapter mBluetoothAdapter;
@@ -152,6 +152,11 @@ public class BluetoothConnectionService {
         }
 
         mConnectThread = new ConnectThread(device, uuid);
+        mConnectThread.start();
+    }
+    public void fastConnect() {
+        Log.d(TAG,mBTDevice.getName());
+        mConnectThread = new ConnectThread(mBTDevice, myUUID);
         mConnectThread.start();
     }
 

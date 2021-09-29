@@ -42,6 +42,7 @@ public class arena_map extends AppCompatActivity {
     private TextView statusBox;
     private static Arena arenaMap;
     static TextView txtRobotDirection, txtRobotCoord;
+    BluetoothConnectionService mBluetoothConnection;
     ProgressDialog myDialog;
 
 
@@ -54,7 +55,7 @@ public class arena_map extends AppCompatActivity {
 
         //Get broadcasted msg
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
-
+        mBluetoothConnection = new BluetoothConnectionService(arena_map.this);
         //sharedPreferences set up
         arena_map.context = getApplicationContext();
         statusBox = findViewById(R.id.statusBox);
@@ -85,6 +86,7 @@ public class arena_map extends AppCompatActivity {
         Button set_robot = findViewById(R.id.button10);
         Button reset_map = findViewById(R.id.button11);
         Button startButton = findViewById(R.id.startButton);
+        Button fastConnectButton = findViewById(R.id.fastConnectButton);
 
         reset_map.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -107,6 +109,13 @@ public class arena_map extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG,"start button called");
                 BluetoothConnectionService.sendMessage(Arena.sendArenaInformation());
+            }
+        });
+
+        fastConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBluetoothConnection.fastConnect();
             }
         });
     }

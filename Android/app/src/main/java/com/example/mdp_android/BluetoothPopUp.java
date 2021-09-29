@@ -165,7 +165,8 @@ public class BluetoothPopUp extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: A device is selected.");
                 Log.d(TAG, "onItemClick: DEVICE NAME: " + deviceName);
                 Log.d(TAG, "onItemClick: DEVICE ADDRESS: " + deviceAddress);
-
+                BluetoothConnectionService.mBTDevice=mPairedBTDevices.get(i);
+                Toast.makeText(BluetoothPopUp.this, deviceName, Toast.LENGTH_LONG).show();
                 mBluetoothConnection = new BluetoothConnectionService(BluetoothPopUp.this);
                 mBTDevice = mPairedBTDevices.get(i);
             }
