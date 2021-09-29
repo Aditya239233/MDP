@@ -18,8 +18,8 @@ class Runner:
         self.arena.set_obstacles(obstacles)
         self.arena.set_start_pos(car_start_pos)
         
-        from algorithms.hybrid_astar.simulate import save_arena_img
-        save_arena_img(self.arena, error=True)
+        #from algorithm.planner.algorithms.hybrid_astar.simulate import save_arena_img
+        #save_arena_img(self.arena, error=True)
 
     
     def run(self, to_simulate=False):
@@ -40,16 +40,16 @@ class Runner:
             param = data.split(",")
 
             if param[0].upper() == "ROBOT":
-                robot_x = int(param[1])
-                robot_y = int(param[2])
+                robot_x = int(float(param[1]))
+                robot_y = int(float(param[2]))
                 direction = get_angle_from_direction(param[3])
 
                 start_pos = (robot_x, robot_y, direction)
 
             elif param[0].upper() == "OBSTACLE":
-                obs_id = int(param[1])
-                obs_x = int(param[2])
-                obs_y = int(param[3])
+                obs_id = int(float(param[1]))
+                obs_x = int(float(param[2]))
+                obs_y = int(float(param[3]))
                 obs_direction = get_angle_from_direction(param[4])
                 obs = Obstacle(obs_x, obs_y, obs_direction, obs_id)
                 obstacles.append(obs)

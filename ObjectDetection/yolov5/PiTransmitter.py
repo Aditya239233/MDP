@@ -3,10 +3,12 @@ import pickle
 import time
 from config import PI_IP,PORT
 
+print("Connecting...")
 HEADERSIZE = 20
 clientsocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 #clientsocket.connect((socket.gethostname(),1234))
 clientsocket.connect((PI_IP,PORT))#rpi
+
 
 def sendData(msg,destination):
 	status = True

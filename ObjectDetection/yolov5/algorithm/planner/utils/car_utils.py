@@ -8,7 +8,7 @@ class Car_C:
     ACTUAL_RB = 0.4
     
     ACTUAL_CAR_LENGTH = ACTUAL_RB + ACTUAL_RF
-    W = 4.0  # [m] width of vehicle (For more allowance?)
+    W = 4.5  # [m] width of vehicle (For more allowance?)
     WD = 4.0  # [m] distance between left-right wheels (3.5)
     WB = 3.0  # [m] Wheel base
     TR = 0.4  # [m] Tyre radius
