@@ -4,12 +4,14 @@ from algorithm.planner.utils.angles import Angle
 # x,y lies in [0, 20]
 class TestSet:
 
+    # Test 0
+    obstacles = [[6,6,Angle.NINETY_DEG]]
     # Test 1
-    obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],
-    [10, 8, Angle.ZERO_DEG],
-    [9, 17, Angle.TWO_SEVENTY_DEG],
-    [9, 12, Angle.ONE_EIGHTY_DEG],
-    [10, 4, Angle.ZERO_DEG]]
+    # obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],
+    # [10, 8, Angle.ZERO_DEG],
+    # [9, 17, Angle.TWO_SEVENTY_DEG],
+    # [9, 12, Angle.ONE_EIGHTY_DEG],
+    # [10, 4, Angle.ZERO_DEG]]
 
     # Test 2
     # obstacles = [[2, 10, Angle.TWO_SEVENTY_DEG],

@@ -121,6 +121,23 @@ def check_and_fix_anomalies(path):
     for i in range(0, len(path.x)-1):
         path.yaw[i] = get_base_angle(path.yaw[i])
 
+
+    # # if the yaw is changing, then steer should be non-zero
+    for i in range(1, len(path.x)):
+        curr_yaw = path.yaw[i]
+        last_yaw = path.yaw[i-1]
+        if not math.isclose(curr_yaw, last_yaw):
+            if path.direction[i] > 0:
+                if curr_yaw < last_yaw:
+                    path.steer[i] = 0.625
+                else:
+                    path.steer[i] = -0.625
+            else:
+                if curr_yaw < last_yaw:
+                    path.steer[i] = -0.625
+                else:
+                    path.steer[i] = 0.625
+
     # check for anomalies in steer (-ve +ve -ve or +ve -ve +ve)
     for i in range(1, len(path.x)-1):
         if same_sign(path.steer[i-1], path.steer[i+1]) and not same_sign(path.steer[i], path.steer[i+1]):

@@ -13,7 +13,7 @@ class Car_C:
     WB = 3.0  # [m] Wheel base
     TR = 0.4  # [m] Tyre radius
     TW = 0.4  # [m] Tyre width
-    MAX_STEER = 0.625  # [rad] maximum steering angle
+    MAX_STEER = 0.6  # [rad] maximum steering angle
 
     TOL_SPACE = 6.0  # camera space
 

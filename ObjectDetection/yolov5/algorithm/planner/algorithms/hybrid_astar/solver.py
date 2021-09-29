@@ -34,6 +34,7 @@ def solve(arena: Arena):
         raise
 
     tour, tour_sequence = graph.get_shortest_tour(waypoint_dict, dist_vector)
+    print("helo", tour)
 
     # if no waypoints == no valid tour found
     if len(tour) == 0:
@@ -60,7 +61,7 @@ def solve(arena: Arena):
 
     # calculate steer value
     for path in paths:
-
+        
         n = len(path.x)
         for k in range(n):
             if k < n - 2:
@@ -70,6 +71,36 @@ def solve(arena: Arena):
                 steer = 0
             
             path.steer.append(steer)
+
+    obs_index = 1
+    # Add the waypoint to the path end and
+    # Add starting point to the path start
+    for path in paths:
+        # Start
+        w_x = tour[obs_index-1][0]
+        w_y = tour[obs_index-1][1]
+        w_yaw = tour[obs_index-1][2]
+        direction = path.direction[0]
+        steer = path.steer[0]
+
+        path.x = [w_x] + path.x
+        path.y = [w_y] + path.y
+        path.yaw = [w_yaw] + path.yaw
+        path.direction = [direction] + path.direction
+        path.steer = [steer] + path.steer
+
+        # End
+        w_x = tour[obs_index][0]
+        w_y = tour[obs_index][1]
+        w_yaw = tour[obs_index][2]
+        direction = path.direction[-1]
+        steer = path.steer[-1]
+
+        path.x.append(w_x)
+        path.y.append(w_y)
+        path.yaw.append(w_yaw)
+        path.direction.append(direction)
+        path.steer.append(steer)
 
     print("Tour returned")
     return paths, tour_sequence
