@@ -272,7 +272,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 			obstacle_num = getAndroidData()
 			if not startTime:
 				startTime = datetime.now()
-			print(f"{obstacle_num}")
+			print(f"obstacle number is :{obstacle_num}")
 			obstacle_num = int(obstacle_num)
 
 			if obstacle_num>0 and obstacle_num <7:
@@ -396,7 +396,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 					c = int(cls)
 					label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
 					if c+1==31:# if detected bulleye send over as 31 with obstacle ID as 100
-						sendData(f"TARGET,100,31","android")
+						continue
 					else:
 						if conf >0:
 
@@ -452,7 +452,8 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 					#android_data["msg"] = f"TARGET,{obstacle_num},{target_ID}"
 					#print(f"{android_data['msg']}")
 					if source =="1":
-						if not (target_ID=="31"):#remove bulleye
+						print(f"{target_ID} -id {type(target_ID)}-----------")
+						if (target_ID<31):#remove bulleye
 							sendData(f"TARGET,{obstacle_num},{target_ID}","android")
 							haveID = False
 							startTime = None
