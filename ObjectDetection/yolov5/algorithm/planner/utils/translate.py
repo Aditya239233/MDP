@@ -1,10 +1,12 @@
 from algorithm.planner.utils.helpers import convert_sim_to_val
+from algorithm.planner.utils.angles import Angle
 import math
+import re
 
 from numpy import add
 from algorithm.planner.entity.path import Path
 
-SPEED = 0.01 #unit/ms
+SPEED = 0.0097 #unit/ms
 ROT_TIME = 891.2676813 #ms/rad
 TWO_PI = 2 * math.pi
 
@@ -114,6 +116,20 @@ def get_base_angle(angle):
     
     return angle
 
+def in_fourth_quadrant(angle):
+    return angle >= Angle.TWO_SEVENTY_DEG and angle < Angle.THREE_SIXTY_DEG
+
+def in_first_quadrant(angle):
+    return angle >= Angle.ZERO_DEG and angle < Angle.NINETY_DEG
+
+# see if curr is increased from last
+# need to check for edge case -> when yaw crosses the 0 rad mark
+def increasing(curr, last):
+    if in_fourth_quadrant(last) and in_first_quadrant(curr):
+        return True
+    if in_first_quadrant(last) and in_fourth_quadrant(curr):
+        return False
+    return curr > last
 
 def check_and_fix_anomalies(path):
     # Sometimes, the sign of steer will be wrong - can detect through a window of size 3 on the yaw value
@@ -121,28 +137,51 @@ def check_and_fix_anomalies(path):
     for i in range(0, len(path.x)-1):
         path.yaw[i] = get_base_angle(path.yaw[i])
 
-
-    # # if the yaw is changing, then steer should be non-zero
+    # # if the yaw is changing, then steer should be non-zero - and only check for zero steer
     for i in range(1, len(path.x)):
         curr_yaw = path.yaw[i]
         last_yaw = path.yaw[i-1]
-        if not math.isclose(curr_yaw, last_yaw):
+        curr_steer = path.steer[i]
+        if math.isclose(curr_steer, 0) and not math.isclose(curr_yaw, last_yaw):
             if path.direction[i] > 0:
-                if curr_yaw < last_yaw:
-                    path.steer[i] = 0.625
+                if increasing(curr_yaw, last_yaw):
+                    path.steer[i] = -0.6
                 else:
-                    path.steer[i] = -0.625
+                    path.steer[i] = 0.6
             else:
-                if curr_yaw < last_yaw:
-                    path.steer[i] = -0.625
+                if increasing(curr_yaw, last_yaw):
+                    path.steer[i] = 0.6
                 else:
-                    path.steer[i] = 0.625
+                    path.steer[i] = -0.6
+
+    # check for change of yaw at the start
+    start_yaw = path.yaw[0]
+    next_yaw = path.yaw[1]
+
+    if not math.isclose(start_yaw, next_yaw):
+        if path.direction[0] > 0:
+            if increasing(next_yaw, start_yaw):
+                path.steer[0] = -0.6
+            else:
+                path.steer[0] = 0.6
+        else:
+            if increasing(next_yaw, start_yaw):
+                path.steer[0] = 0.6
+            else:
+                path.steer[0] = -0.6
+
 
     # check for anomalies in steer (-ve +ve -ve or +ve -ve +ve)
     for i in range(1, len(path.x)-1):
         if same_sign(path.steer[i-1], path.steer[i+1]) and not same_sign(path.steer[i], path.steer[i+1]):
             path.steer[i] *= -1
 
+def add_instruction(ins_list, pos_list, ins, pos):
+    if int(ins[-4:]) == 0:
+        return
+    
+    ins_list.append(ins)
+    pos_list.append(pos)
 
 def translate(path):
 
@@ -166,9 +205,8 @@ def translate(path):
         if curr_motion != prev_motion:
             curr_section.append(val)
             curr_instruction = get_instruction(curr_section)
-            instructions.append(curr_instruction)
-
-            pos_after_instruction.append((curr_x, curr_y, curr_yaw))
+            next_coor = (curr_x, curr_y, curr_yaw)
+            add_instruction(instructions, pos_after_instruction, curr_instruction, next_coor)
 
             curr_section = [val]
         else:
@@ -178,9 +216,8 @@ def translate(path):
     
     if curr_section:
         curr_instruction = get_instruction(curr_section)
-        instructions.append(curr_instruction)
-        pos_after_instruction.append((curr_x, curr_y, curr_yaw))
-    
+        next_coor = (curr_x, curr_y, curr_yaw)
+        add_instruction(instructions, pos_after_instruction, curr_instruction, next_coor)
 
     return instructions, pos_after_instruction
 
@@ -195,6 +232,7 @@ def process_android_coor(coors):
 
     return new_list
 
+
 def translate_tour(tour, tour_seq):
     list_of_instructions = []
     list_of_coor = []
@@ -204,7 +242,6 @@ def translate_tour(tour, tour_seq):
     for path in tour:
         instructions, android_coor = translate(path)
         android_coor = process_android_coor(android_coor)
-
         instructions.append(f"C{tour_seq[i]}")  # car stop and do image recognition
 
         list_of_instructions.append(instructions)

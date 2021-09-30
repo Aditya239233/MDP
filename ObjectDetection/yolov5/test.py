@@ -6,6 +6,7 @@ from algorithm.planner.utils.translate import translate_tour
 from algorithm.planner.entity.obstacle import Obstacle
 from algorithm.planner.entity.arena import Arena
 from algorithm.planner.utils.car_utils import Car_C
+from algorithm.planner.algorithms.hybrid_astar.simulate import simulate
 
 # Planner class for the Flask server
 # Does not support string-to-pos translation
@@ -51,7 +52,6 @@ class Planner:
     def get_instructions(self, job_id):
 
         tour, tour_seq = self.cache[job_id]
-
         if tour != None:
             instructions, _ = translate_tour(tour, tour_seq)
             return instructions
@@ -115,14 +115,17 @@ if __name__ == "__main__":
 
     arena = p.init_arena(obstacles)
     job_id = p.run_job()
-    instructions = p.get_instructions(job_id)
-    print_instructions(instructions)
-
+    
     tour = p.get_tour_from_job(job_id)
-    from algorithm.planner.algorithms.hybrid_astar.simulate import simulate
-    simulate(tour, arena, save_gif=True, gif_name="./apollo2.gif")
     for path in tour:
         for i in range(len(path.x)):
             print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
-
         print("\n\n")
+            
+    instructions = p.get_instructions(job_id)
+    print_instructions(instructions)
+
+    simulate(tour, arena, save_gif=True, gif_name="./apollo2.gif")
+
+
+    

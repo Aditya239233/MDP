@@ -327,10 +327,14 @@ def calc_hybrid_cost(node, hmap, P):
 
 
 def calc_motion_set():
-    s = np.arange(Car_C.MAX_STEER / C.N_STEER,
-                  Car_C.MAX_STEER, Car_C.MAX_STEER / C.N_STEER)
+    # s = np.arange(Car_C.MAX_STEER / C.N_STEER,
+    #               Car_C.MAX_STEER, Car_C.MAX_STEER / C.N_STEER)
+ 
+    # steer = list(s) + [0.0] + list(-s)
 
-    steer = list(s) + [0.0] + list(-s)
+
+    steer = [Car_C.MAX_STEER] + [0.0] + [-Car_C.MAX_STEER]
+
     direc = [1.0 for _ in range(len(steer))] + [-1.0 for _ in range(len(steer))]
     steer = steer + steer
 

@@ -4,14 +4,31 @@ from algorithm.planner.utils.angles import Angle
 # x,y lies in [0, 20]
 class TestSet:
 
-    # Test 0
-    obstacles = [[6,6,Angle.NINETY_DEG], [2,12,Angle.NINETY_DEG]]
+    # Test - side by side obstacle
+    # obstacles = [[6,6,Angle.NINETY_DEG], 
+    # [7,6,Angle.NINETY_DEG], 
+    # [8,6, Angle.NINETY_DEG]]
+
+    # Test - obstacle facing each other
+    # obstacles = [[6,6,Angle.NINETY_DEG], 
+    # [6,12,Angle.TWO_SEVENTY_DEG]]
+
+    # Test - obstacle staggered
+    # obstacles = [[6,6,Angle.NINETY_DEG], 
+    # [7,7,Angle.NINETY_DEG]]
+
+    # Test - more obstacles staggered
+    # obstacles = [[6,6,Angle.NINETY_DEG], 
+    # [7,7,Angle.NINETY_DEG],
+    # [8,8, Angle.NINETY_DEG],
+    # [9,9, Angle.NINETY_DEG],
+    # [10,10, Angle.NINETY_DEG]]
 
     # Test 0.1
     # obstacles = [[2,12,Angle.NINETY_DEG],
-    #     [6,5,Angle.NINETY_DEG],
-    #     [8,13, Angle.NINETY_DEG],
-    #     [12,6, Angle.NINETY_DEG]]
+    # [6,6,Angle.NINETY_DEG],
+    # [8,13, Angle.NINETY_DEG],
+    # [12,6, Angle.NINETY_DEG]]
 
     # Test 1
     # obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],
@@ -37,11 +54,11 @@ class TestSet:
 
 
     # Test 4
-    # obstacles = [[10,4,Angle.ONE_EIGHTY_DEG],
-    # [10,8,Angle.ONE_EIGHTY_DEG],
-    # [10,12,Angle.ONE_EIGHTY_DEG],
+    # obstacles = [[10,0,Angle.ONE_EIGHTY_DEG],
+    # [10,5,Angle.ONE_EIGHTY_DEG],
+    # [10,10,Angle.ONE_EIGHTY_DEG],
     # [10,15,Angle.ONE_EIGHTY_DEG],
-    # [10,18,Angle.ONE_EIGHTY_DEG]]
+    # [10,20,Angle.ONE_EIGHTY_DEG]]
 
 
     # Test 5
@@ -50,3 +67,17 @@ class TestSet:
     # [9, 15, Angle.TWO_SEVENTY_DEG],
     # [17, 12, Angle.ONE_EIGHTY_DEG],
     # [14, 16, Angle.ZERO_DEG]]
+
+    # Test 6
+    # obstacles = [[10,0,Angle.ZERO_DEG],
+    # [10,5,Angle.ONE_EIGHTY_DEG],
+    # [10,10,Angle.ZERO_DEG],
+    # [10,15,Angle.ONE_EIGHTY_DEG],
+    # [10,20,Angle.ZERO_DEG]]
+
+    # Test 6
+    obstacles = [[5,10,Angle.ZERO_DEG],
+    [5,12,Angle.ONE_EIGHTY_DEG],
+    [6,12,Angle.NINETY_DEG],
+    [9,14,Angle.NINETY_DEG],
+    [12,7,Angle.NINETY_DEG]]
