@@ -8,10 +8,12 @@ import math
 import numpy as np
 from itertools import permutations
 
+START_NODE_LBL = 99
+
 # Given the obstacles, set the car's position in front of the obstacles as waypoints
 # Then, these waypoints are treated as nodes of the path graph
 def generate_waypoints(start_pos, obstacles, sideways=False):
-    waypoints = {-1: start_pos} #start_pos - (x, y, direction)
+    waypoints = {START_NODE_LBL: start_pos} #start_pos - (x, y, direction)
 
     for obstacle in obstacles:
         x1 = obstacle.x
@@ -84,6 +86,13 @@ def find_path_distance(ox, oy):
 def get_dist_bet_waypoints(waypoint_dict, ox, oy):
     waypoint_labels = list(waypoint_dict.keys())
     num_nodes = len(waypoint_labels)
+    waypoint_to_dist_index = {}
+
+    i = 0
+    for waypoint_lbl in waypoint_labels:
+        waypoint_to_dist_index[waypoint_lbl] = i
+        i += 1
+
     dist_vector = np.zeros((num_nodes, num_nodes))
 
     for i in range(num_nodes-1):
@@ -102,21 +111,27 @@ def get_dist_bet_waypoints(waypoint_dict, ox, oy):
             else:
                 dist = find_path_distance(path.x, path.y)
 
+            src_index =  waypoint_to_dist_index[src_lbl]
+            dest_index = waypoint_to_dist_index[dest_lbl]
+
             # assuming label is an integer
-            dist_vector[src_lbl][dest_lbl] = dist
-            dist_vector[dest_lbl][src_lbl] = dist
+            dist_vector[src_index][dest_index] = dist
+            dist_vector[dest_index][src_index] = dist
 
-    return dist_vector
+    return dist_vector, waypoint_to_dist_index
 
 
-def get_dist_of_tour(path, dist_vector):
+def get_dist_of_tour(path, dist_vector, waypoint_index_dict):
     total_dist = 0
 
     for i in range(len(path)-1):
-        src = path[i]
-        dest = path[i+1]
+        src_lbl = path[i]
+        dest_lbl = path[i+1]
 
-        path_dist = dist_vector[src][dest]
+        src_index = waypoint_index_dict[src_lbl]
+        dest_index = waypoint_index_dict[dest_lbl]
+
+        path_dist = dist_vector[src_index][dest_index]
 
         if path_dist != -1:
             total_dist += path_dist
@@ -129,34 +144,75 @@ def get_dist_of_tour(path, dist_vector):
 # Since there are only 6 waypoints (inc start position),
 # we can use brute-force to find the Hamiltonian path
 # For n > 10, we need to implement a polynomial approximation algorithm instead
-def get_shortest_tour(waypoint_dict, dist_vector):
-    node_lbl = list(waypoint_dict.keys())
-    node_lbl.remove(-1) # -1 is source
+def get_shortest_tour(waypoint_dict, dist_vector, waypoint_index_dict):
 
-    all_permutations = permutations(node_lbl)
-    min_tour = []
-    min_dist = math.inf
+    # Use brute force if there are 5 obstacles or fewer
+    if len(dist_vector) <= 6:
+        print("Using exhaustive search")
+        node_lbl = list(waypoint_dict.keys())
+        node_lbl.remove(START_NODE_LBL)
 
-    # brute force all possible paths
-    for arr in all_permutations:
-        tour = [-1]
-        tour.extend(arr)
-        dist = get_dist_of_tour(tour, dist_vector)
+        all_permutations = permutations(node_lbl)
+        min_tour = []
+        min_dist = math.inf
 
-        # if any path in the tour does not exist, then the dist will be >= inf
-        # and the following if statement will not be executed
-        if dist < min_dist:
-            min_tour = tour
-            min_dist = dist
-        
-    #     print(f"{path}: {dist}")
+        # brute force all possible paths, fix start node as first
+        for arr in all_permutations:
+            tour = [START_NODE_LBL]
+            tour.extend(arr)
+            dist = get_dist_of_tour(tour, dist_vector, waypoint_index_dict)
 
-    # print()
-    # print(f"{min_path} has the shortest distance of {min_dist}")
+            # if any path in the tour does not exist, then the dist will be >= inf
+            # and the following if statement will not be executed
+            if dist < min_dist:
+                min_tour = tour
+                min_dist = dist
+            
+        #     print(f"{path}: {dist}")
 
-    # get the path in terms of waypoints (currently it is still in labels)
+        # print()
+        # print(f"{min_path} has the shortest distance of {min_dist}")
+
+        # get the path in terms of waypoints (currently it is still in labels)
+        waypoints = []
+        for node in min_tour:
+            waypoints.append(waypoint_dict[node])
+
+        return waypoints, min_tour
+
+    # Or else, use a simple greedy algorithm to find shortest tour
+    print("Using Greedy")
+    node_lbls = list(waypoint_dict.keys())
+
+    tour = [START_NODE_LBL]
+    num_of_nodes = len(node_lbls)
+    visited = [False] * num_of_nodes
+    visited[waypoint_index_dict[START_NODE_LBL]] = True
+
+    # Find next nearest neighbor
+    for i in range(1, num_of_nodes):
+        curr_node = tour[-1] # last node
+        nearest_unvisited_node = find_nearest(curr_node, dist_vector, visited, waypoint_index_dict)
+        tour.append(nearest_unvisited_node)
+    
     waypoints = []
-    for node in min_tour:
+    for node in tour:
         waypoints.append(waypoint_dict[node])
 
-    return waypoints, min_tour
+    return waypoints, tour
+
+# Returns the label of the nearest unvisited node
+def find_nearest(curr_node, dist_vector, visited, waypoint_index_dict):
+    curr_node_index = waypoint_index_dict[curr_node]
+    all_dist_to_curr = dist_vector[curr_node_index]
+
+    min_dist = min_node_index = math.inf
+
+    for i in range(len(all_dist_to_curr)):
+        dist = all_dist_to_curr[i]
+        if i != curr_node_index and not visited[i] and dist < min_dist:
+            min_dist = dist
+            min_node_index = i
+    
+    visited[min_node_index] = True
+    return list(waypoint_index_dict.keys())[list(waypoint_index_dict.values()).index(min_node_index)]

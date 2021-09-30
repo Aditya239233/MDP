@@ -27,14 +27,13 @@ def solve(arena: Arena):
     print("Waypoints generated")
 
     try:
-        dist_vector = graph.get_dist_bet_waypoints(waypoint_dict, ox, oy)
+        dist_vector, waypoint_index_dict = graph.get_dist_bet_waypoints(waypoint_dict, ox, oy)
         print("Distance vector found")
     except Exception as e:
         print("Distance vector cannot be found")
         raise
 
-    tour, tour_sequence = graph.get_shortest_tour(waypoint_dict, dist_vector)
-    print("helo", tour)
+    tour, tour_sequence = graph.get_shortest_tour(waypoint_dict, dist_vector, waypoint_index_dict)
 
     # if no waypoints == no valid tour found
     if len(tour) == 0:
