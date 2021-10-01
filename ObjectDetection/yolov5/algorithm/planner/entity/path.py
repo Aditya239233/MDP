@@ -6,3 +6,11 @@ class Path:
         self.direction = direction
         self.cost = cost
         self.steer = []
+
+    def __repr__(self):
+        s = "path "
+        for i in range(len(self.x)):
+            s += str((self.x[i], self.y[i], self.yaw[i], self.direction[i], self.steer[i]))
+            s += "\n"
+
+        return s

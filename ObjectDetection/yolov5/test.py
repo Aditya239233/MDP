@@ -125,7 +125,7 @@ if __name__ == "__main__":
     instructions = p.get_instructions(job_id)
     print_instructions(instructions)
 
-    simulate(tour, arena, save_gif=True, gif_name="./apollo2.gif")
+    # simulate(tour, arena, save_gif=True, gif_name="./apollo2.gif")
 
 
     
