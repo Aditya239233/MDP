@@ -86,7 +86,26 @@ def stichandshow(img_map,save_path):
 		
 		stichImg(save_path[:-1])
 		#os._exit(0)
-	
+
+def displayImage(displayImageList,imgpath):
+
+	images = []
+	for imagePath in displayImageList:
+
+		image = cv2.imread(imagePath)
+		image = cv2.resize(image,(480, 360), interpolation = cv2.INTER_AREA)
+		images.append(image)
+	print("[INFO] stitching images...")
+	#width,height,channel = images[0].shape #get sample width and height
+
+	row1 = np.hstack((images[0], images[1],images[2]))
+	row2 = np.hstack((images[3], images[4],images[5]))
+	row3 = np.hstack((images[6], images[7],images[8]))
+	stichedImg = np.vstack((row1, row2,row3))
+
+	cv2.imwrite(f"{imgpath}/stiched.png", stichedImg)
+	im = Image.open(f"{imgpath}/stiched.png") 
+	im.show()
 
 @torch.no_grad()
 def run(weights='yolov5s.pt',  # model.pt path(s)
@@ -134,8 +153,9 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 	haveID = False
 	obstacle_num = 1
 	lastsentid = -1
-	#img_map ={0 = '' , 1= '' , 2='', 3= '', 4 = '' , 5= '' , 6= '', 7 = '' , 8= '' , 9= '', 10 = '' , 11= '' , 12= '', 13='' , 14 = '' , 15= '' , 16= '', 17 = '' , 18= '' , 19= '',20 = '' , 21= '' , 22 ='', 23= '', 24 = '' , 25= '' , 26= '', 27 = '' , 28 = '' , 29 = '', 30 = ''}
-
+	
+	displayImageList = [f"{FILELOCATION}/placeholder/img1.jpg",f"{FILELOCATION}/placeholder/img2.jpg",f"{FILELOCATION}/placeholder/img3.jpg",f"{FILELOCATION}/placeholder/img4.jpg",f"{FILELOCATION}/placeholder/img5.jpg",f"{FILELOCATION}/placeholder/img6.jpg",f"{FILELOCATION}/placeholder/img7.jpg",f"{FILELOCATION}/placeholder/img8.jpg",f"{FILELOCATION}/placeholder/img9.jpg"]
+	displayImage(displayImageList,f"{FILELOCATION}/placeholder")
 
 	if(source=='1'):#rpi
 		print("in rpi")
@@ -362,7 +382,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 					if save_img or save_crop or view_img:  # Add bbox to image
 						c = int(cls)  # integer class
 						label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-						annotator.box_label(xyxy, label, color=colors(c, True))
+						annotator.box_label(xyxy, f"{label} id:{c}", color=colors(c, True))
 						if save_crop:
 							save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
@@ -455,6 +475,12 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 						print(f"{target_ID} -id {type(target_ID)}-----------")
 						if (target_ID<31):#remove bulleye
 							sendData(f"TARGET,{obstacle_num},{target_ID}","android")
+							#write data and display image
+							print(f"data sent: TARGET,{obstacle_num},{target_ID}","android")
+							res = cv2.imwrite(f"{save_path[:-1]}{target_ID}.JPG", img_map[lastsentid])
+							displayImageList[obstacle_num-1] = f"{save_path[:-1]}{target_ID}.JPG"
+							displayImage(displayImageList,save_path[:-1])
+
 							haveID = False
 							startTime = None
 					
@@ -471,13 +497,13 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 			k = cv2.waitKey(30) & 0xFF
 		   
 			if k==27:    # Esc key to stop
-				for key in img_map:
-					if len(img_map[key])>1:
-						actualID = key +1
-						res = cv2.imwrite(f"{save_path[:-1]}{actualID}.JPG", img_map[key])
-				print(img_stats)
+				# for key in img_map:
+				# 	if len(img_map[key])>1:
+				# 		actualID = key +1
+				# 		res = cv2.imwrite(f"{save_path[:-1]}{actualID}.JPG", img_map[key])
+				# print(img_stats)
 				
-				stichImg(save_path[:-1])
+				# stichImg(save_path[:-1])
 				os._exit(0)
 			elif k==-1:  # normally -1 returned,so don't print it
 				continue
