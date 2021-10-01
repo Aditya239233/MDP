@@ -63,6 +63,8 @@ def get_car_motion(direction, steer):
 
 
 def get_angle(motion, section):
+    # print(motion)
+    # print(section)
     if motion == "df" or motion == "ar": # in clockwise direction - angle should decrease
         start_angle = prev_angle = section[0][3]
         for i in range(1, len(section)):
@@ -145,14 +147,14 @@ def check_and_fix_anomalies(path):
         if math.isclose(curr_steer, 0) and not math.isclose(curr_yaw, last_yaw):
             if path.direction[i] > 0:
                 if increasing(curr_yaw, last_yaw):
-                    path.steer[i] = -0.6
+                    path.steer[i] = -0.7
                 else:
-                    path.steer[i] = 0.6
+                    path.steer[i] = 0.7
             else:
                 if increasing(curr_yaw, last_yaw):
-                    path.steer[i] = 0.6
+                    path.steer[i] = 0.7
                 else:
-                    path.steer[i] = -0.6
+                    path.steer[i] = -0.7
 
     # check for change of yaw at the start
     start_yaw = path.yaw[0]
@@ -248,10 +250,26 @@ def translate_tour(tour, tour_seq):
         list_of_coor.append(android_coor)
 
         i += 1
+    
+    coor_string = android_coor_to_string(list_of_coor)
 
-    return list_of_instructions, list_of_coor
+    return list_of_instructions, coor_string
 
 
+def android_coor_to_string(list_of_coor):
+    list_of_path_str = []
+
+    for path in list_of_coor:
+        path_coor = []
+        for coor in path:
+            path_coor.append(str(coor))
+        
+        path_str = ",".join(path_coor)
+        list_of_path_str.append(path_str)
+
+    results = "|".join(list_of_path_str)
+            
+    return results
 
 
 # UNUSED
