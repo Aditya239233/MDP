@@ -15,6 +15,6 @@ class Car_C:
     TW = 0.5  # [m] Tyre width
     MAX_STEER = 0.7  # [rad] maximum steering angle
 
-    TOL_SPACE = 8.0  # camera space
+    TOL_SPACE = 7.6  # camera space - 38 cm from face to back axle
 
     START_POS = 1, 1, Angle.NINETY_DEG # Default starting pos    
