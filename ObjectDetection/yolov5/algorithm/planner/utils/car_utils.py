@@ -11,10 +11,10 @@ class Car_C:
     W = 4.5  # [m] width of vehicle (For more allowance?)
     WD = 4.5  # [m] distance between left-right wheels (3.5)
     WB = 2.8  # [m] Wheel base (3.0)
-    TR = 1.3  # [m] Tyre radius
+    TR = 0.65  # [m] Tyre radius
     TW = 0.5  # [m] Tyre width
     MAX_STEER = 0.7  # [rad] maximum steering angle
 
-    TOL_SPACE = 7.0  # camera space
+    TOL_SPACE = 8.0  # camera space
 
     START_POS = 1, 1, Angle.NINETY_DEG # Default starting pos    
