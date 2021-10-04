@@ -9,7 +9,7 @@ Usage:
 from algorithm.planner.main import Runner
 from PiTransmitter import sendData,getAndroidData
 
-from config import WEIGHTSPATH, IMGCONF, CONF, SOURCE
+from config import WEIGHTSPATH, IMGCONF, CONF, SOURCE,FILELOCATION
 import argparse
 import sys
 import time
