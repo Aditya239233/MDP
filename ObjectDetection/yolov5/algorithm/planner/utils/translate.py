@@ -6,7 +6,7 @@ import re
 from numpy import add
 from algorithm.planner.entity.path import Path
 
-SPEED = 0.0097 #unit/ms
+SPEED = 0.0097 #unit/ms (48.5cm/s)
 ROT_TIME = 891.2676813 #ms/rad
 TWO_PI = 2 * math.pi
 

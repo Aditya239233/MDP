@@ -117,15 +117,15 @@ if __name__ == "__main__":
     job_id = p.run_job()
     
     tour = p.get_tour_from_job(job_id)
-    for path in tour:
-        for i in range(len(path.x)):
-            print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
-        print("\n\n")
+    # for path in tour:
+    #     for i in range(len(path.x)):
+    #         print(f"{path.x[i] :.3f}, {path.y[i] :.3f}, {path.direction[i]}, {path.yaw[i] :.3f}, {path.steer[i] :.3f}")
+    #     print("\n\n")
             
     instructions = p.get_instructions(job_id)
     print_instructions(instructions)
 
-    # simulate(tour, arena, save_gif=True, gif_name="./apollo2.gif")
+    #simulate(tour, arena, save_gif=True, gif_name="./apollo2.gif")
 
 
     

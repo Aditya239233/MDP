@@ -7,14 +7,19 @@ class TestSet:
     # Test - side by side obstacle
     # obstacles = [[6,6,Angle.NINETY_DEG], 
     # [7,6,Angle.NINETY_DEG], 
-    # [8,6, Angle.NINETY_DEG]]
+    # [7,15,Angle.TWO_SEVENTY_DEG],
+    # [3,11,Angle.ZERO_DEG]]
+
+    # obstacles = [ 
+    # [7,6,Angle.NINETY_DEG], 
+    # [7,14,Angle.TWO_SEVENTY_DEG]]
 
     # Test - obstacle facing each other
     # obstacles = [[6,6,Angle.NINETY_DEG], 
     # [6,12,Angle.TWO_SEVENTY_DEG]]
 
     # Test - single obstacle for checking turning radius
-    # obstacles = [[6,6,Angle.ONE_EIGHTY_DEG]]
+    obstacles = [[7.5,6,Angle.ONE_EIGHTY_DEG]]
 
 
     # Test - obstacle staggered
@@ -29,10 +34,15 @@ class TestSet:
     # [10,10, Angle.NINETY_DEG]]
 
     # Test 0.1
-    obstacles = [[2,12,Angle.NINETY_DEG],
-    [6,6,Angle.NINETY_DEG],
-    [8,13, Angle.NINETY_DEG],
-    [12,6, Angle.NINETY_DEG]]
+    # obstacles = [[3,12,Angle.NINETY_DEG],
+    # [7,6,Angle.NINETY_DEG],
+    # [9,13, Angle.TWO_SEVENTY_DEG],
+    # [13,6, Angle.ZERO_DEG]]
+
+    # obstacles = [[2,11,Angle.ZERO_DEG],
+    # [6,5,Angle.ZERO_DEG],
+    # [8,12, Angle.ZERO_DEG],
+    # [12,6, Angle.ZERO_DEG]]
 
     # Test 1
     # obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],

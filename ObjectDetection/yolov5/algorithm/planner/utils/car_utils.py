@@ -9,11 +9,11 @@ class Car_C:
     
     ACTUAL_CAR_LENGTH = ACTUAL_RB + ACTUAL_RF
     W = 4.5  # [m] width of vehicle (For more allowance?)
-    WD = 4.5  # [m] distance between left-right wheels (3.5)
+    WD = 3.0  # [m] distance between left-right wheels (3.5)
     WB = 2.8  # [m] Wheel base (3.0)
-    TR = 0.65  # [m] Tyre radius
-    TW = 0.5  # [m] Tyre width
-    MAX_STEER = 0.7  # [rad] maximum steering angle
+    TR = 0.6  # [m] Tyre radius (3.0cm)
+    TW = 0.5  # [m] Tyre width (2.6cm)
+    MAX_STEER = 0.6  # [rad] maximum steering angle
 
     TOL_SPACE = 7.6  # camera space - 38 cm from face to back axle
 

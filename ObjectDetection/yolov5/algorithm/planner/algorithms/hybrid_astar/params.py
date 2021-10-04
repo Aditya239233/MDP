@@ -8,7 +8,7 @@ class C:  # Parameter config for algorithm
 
     XY_RESO = 0.5 # [m] (1.0)/(0.5)
     YAW_RESO = np.deg2rad(1.0)  # [rad] (15deg)
-    MOVE_STEP = 0.05   # [m] path interporate resolution (0.1) - for better instruction generation due to more granular coors
+    MOVE_STEP = 0.01   # [m] path interporate resolution (0.1) - for better instruction generation due to more granular coors
     N_STEER = 1.0  # steer command number
     COLLISION_CHECK_STEP = 5  # skip number for collision check
     # EXTEND_BOUND = 1  # collision check range extended
