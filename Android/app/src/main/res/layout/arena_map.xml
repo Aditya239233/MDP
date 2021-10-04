@@ -148,15 +148,37 @@
                     android:text=""
                     android:background="@drawable/border_black_background"/>
 
-                <Button
-                    android:id="@+id/fastConnectButton"
-                    android:layout_width="114dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_height="wrap_content"
-                    app:backgroundTint="@color/navy"
-                    android:text="Connect" />
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="50dp"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/fastConnectButton"
+                        android:layout_width="114dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_height="wrap_content"
+                        app:backgroundTint="@color/navy"
+                        android:text="Connect" />
+
+                    <Button
+                        android:id="@+id/rotate"
+                        android:layout_width="120dp"
+                        android:layout_height="80dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:text="rotate:false"
+                        app:backgroundTint="@color/navy" />
+
+
+                </LinearLayout>
+
 
             </LinearLayout>
+
+
+
+
         </LinearLayout>
 
     </LinearLayout>

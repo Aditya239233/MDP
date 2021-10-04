@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.mdp_android.Arena.Arena;
+import com.example.mdp_android.Arena.Obstacle;
 
 
 import java.nio.charset.Charset;
@@ -87,6 +89,7 @@ public class arena_map extends AppCompatActivity {
         Button reset_map = findViewById(R.id.button11);
         Button startButton = findViewById(R.id.startButton);
         Button fastConnectButton = findViewById(R.id.fastConnectButton);
+        Button rotateButton = findViewById(R.id.rotate);
 
         reset_map.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -118,6 +121,18 @@ public class arena_map extends AppCompatActivity {
                 mBluetoothConnection.fastConnect();
             }
         });
+
+        rotateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG,"rotate button called");
+                Arena.canRotate = !Arena.canRotate;
+                if (Arena.canRotate)
+                    rotateButton.setText("rotate:true");
+                else
+                    rotateButton.setText("rotate:false");
+            }
+        });
     }
 
 
@@ -133,19 +148,6 @@ public class arena_map extends AppCompatActivity {
     private static SharedPreferences getSharedPreferences(Context context){
         return context.getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        switch (requestCode){
-//            case 1:
-//                if(resultCode == Activity.RESULT_OK){
-//                    mBTDevice = (BluetoothDevice) data.getExtras().getParcelable("mBTDevice");
-//                    myUUID = (UUID) data.getSerializableExtra("myUUID");
-//                }
-//        }
-//    }
 
     // Send message to bluetooth
     public static void printMessage(String message) {
@@ -247,6 +249,8 @@ public class arena_map extends AppCompatActivity {
                     Log.d(TAG,"Invalid format: unable to recognize message type");
                 }
             }
+            if (message.charAt(0) == '(')
+                handleData(message);
             arenaMap.updateMap(message);
             sharedPreferences();
             String receivedText = sharedPreferences.getString("message", "") + "\n" + message;
@@ -312,5 +316,89 @@ public class arena_map extends AppCompatActivity {
 
         outState.putString(TAG, "onSaveInstanceState");
         showLog("Exiting onSaveInstanceState");
+    }
+
+    public void handleData(String message) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+//                String message = "(df0456,1.266,2.009,1.059),(w1471,4.758,8.231,1.059),(df1400,7.544,9.016,5.771),(ar0944,6.500,10.800,4.712)|(ar1509,8.796,12.831,3.019),(dr0219,9.295,12.831,3.265),(af1290,7.500,10.800,4.712)|(df0845,6.651,9.141,3.764),(ar0938,8.694,9.340,2.712),(df1017,7.500,11.200,1.571)|(dr0245,7.576,10.647,1.846),(af0652,6.707,11.817,2.578),(dr0502,7.800,11.500,3.142)";
+                String[] messages = message.split("\\|");
+                String main = "";
+                for (String part: messages) {
+                    part = part.replaceAll(" ", "");
+                    part = part.replaceAll("\\),\\(", "-");
+
+                    String[] instructions = part.split("-");
+//                    Log.d(TAG, part);
+
+
+                    for (String instruction : instructions) {
+                        instruction = part.substring(1);
+                        instruction = instruction.replaceAll("\\(", "");
+                        instruction = instruction.replaceAll("\\)", "");
+//                        Log.d(TAG, instruction);
+
+                        String[] i = instruction.split("-");
+                        for (String commands : i) {
+//                            Log.d(TAG, commands);
+                            String[] command = commands.split(",");
+                            String time = command[0];
+                            time = time.replaceAll("\\D+","");
+                            int x = (int) Double.parseDouble(command[1]);
+                            int y = (int) Double.parseDouble(command[2]);
+                            int angle = (int) Math.toDegrees(Double.parseDouble(command[3]));
+                            main += "(" + x +"," + y  +"," + angle + "," + time + ")";
+//                            Log.d(""+angle, ""+x+" "+y);
+                        }
+                        main += ";";
+                        break;
+                    }
+                }
+                Log.d(TAG, main);
+                String[] commands_set = main.split(";");
+                for (String commands: commands_set) {
+                    String[] command = commands.split("\\)\\(");
+                    for (String c: command) {
+                        c = c.replace("(", "");
+                        c = c.replace(")", "");
+                        String[] i = c.split(",");
+                        int x = Integer.parseInt(i[0]);
+                        int y = Integer.parseInt(i[1]);
+                        int angle = Integer.parseInt(i[2]);
+                        i[3] = i[3].replaceAll(";", "");
+                        int time = Integer.parseInt(i[3]);
+
+
+                        Log.d(TAG, ""+x +" "+y + " "+ angle + " "+ time);
+                        String direction = "";
+                        if ((angle >=0 && angle <= 45) || angle >= 315 && angle <= 360)
+                            direction = "east";
+                        else if (angle >=45 && angle <= 135)
+                            direction = "north";
+                        else if (angle >=135 && angle <= 225)
+                            direction = "west";
+                        else
+                            direction = "south";
+                        arenaMap.setRobotLocation(x, y, direction);
+                        try {
+                            Thread.sleep(time);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+            }
+        });
+
     }
 }

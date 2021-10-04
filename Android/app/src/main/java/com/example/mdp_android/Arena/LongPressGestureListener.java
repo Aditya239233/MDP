@@ -3,7 +3,6 @@ package com.example.mdp_android.Arena;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 
 import androidx.core.view.MotionEventCompat;
 import static com.example.mdp_android.Arena.Arena.findGridOnTouch;
@@ -15,6 +14,8 @@ public class LongPressGestureListener extends GestureDetector.SimpleOnGestureLis
     public boolean onSingleTapUp(MotionEvent event) {
         Log.d("", "Single Tap");
         Arena.gestureType = true;
+        if (!Arena.canRotate)
+            Arena.canDrag(true);
         return true;
     }
 
@@ -35,7 +36,7 @@ public class LongPressGestureListener extends GestureDetector.SimpleOnGestureLis
 //        Log.d("TAG","X:Y = " + coordinates[0] + " : " + coordinates[1]);
 
         Log.d("onLongPress","can Drag");
-        Arena.canDrag(true);
+//        Arena.canDrag(true);
 
         return true;
     }

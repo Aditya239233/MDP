@@ -39,6 +39,7 @@ import java.util.ArrayList;
 public class Arena extends View implements Serializable {
 
     private static final String TAG = "Arena Map";
+    public static boolean canRotate;
 
     private static Cell[][] cells;
     private static final int mCols = 20, mRows = 20;
@@ -50,7 +51,7 @@ public class Arena extends View implements Serializable {
     private static int[] oldCoord = new int[]{-1, -1};
     private static ArrayList<int[]> obstacleCoord = new ArrayList<>();
 
-    private static Obstacle [] obstacleList = new Obstacle[5];
+    private static Obstacle [] obstacleList = new Obstacle[8];
 
     private static Paint wallPaint = new Paint();
     private static Paint robotPaint = new Paint();
@@ -154,6 +155,9 @@ public class Arena extends View implements Serializable {
         obstacleList [2] = new Obstacle(670, 200, 670, 200,"3", 0, "None", obstaclePaint, "3");
         obstacleList [3] = new Obstacle(670, 275, 670, 275,"4", 0, "None", obstaclePaint, "4");
         obstacleList [4] = new Obstacle(670, 350, 670, 350,"5", 0, "None", obstaclePaint, "5");
+        obstacleList [5] = new Obstacle(670, 425, 670, 425,"6", 0, "None", obstaclePaint, "6");
+        obstacleList [6] = new Obstacle(670, 500, 670, 500,"7", 0, "None", obstaclePaint, "7");
+        obstacleList [7] = new Obstacle(670, 575, 670, 575,"8", 0, "None", obstaclePaint, "8");
 
         mDoubleTapListener = new GestureDetector.OnDoubleTapListener() {
             @Override
@@ -222,6 +226,7 @@ public class Arena extends View implements Serializable {
 
             }
         }
+        setCurCoord(1, 1);
     }
 
     @Override
@@ -252,82 +257,67 @@ public class Arena extends View implements Serializable {
                             Log.d(TAG, "onTouchEvent: Coordinates are " +
                                     coordinates[0] + " " + coordinates[1]);
                             obstacleList[i].setActionDown(true);
+                            Toast.makeText(getContext(), "ID: " +i, Toast.LENGTH_SHORT).show();
+                            if (canRotate)
+                                canDrag = false;
                         }
-                    }
-                }
-                isOnClick = true;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "onTouchEvent: ACTION_MOVE");
-                //Touch move code
-                for (Obstacle obstacles : obstacleList) {
-                    if (obstacles.getActionDown() ) {
-                        obstacles.setPosition(x, y);
-                        isOnClick = false;
-                        invalidate();
                     }
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.d(TAG, "onTouchEvent: ACTION_UP");
-
-                if (!gestureType) {
-                    //Touch up code
+                if (canRotate) {
                     for (Obstacle obstacles : obstacleList) {
-                        if (obstacles.getActionDown()) {
-                            if (isInArena(coordinates)) {
-//                                obstacles.setPosition(cells[coordinates[0]][coordinates[1]].startX, cells[coordinates[0]][coordinates[1]].startY);
-                                obstacles.setObsMapCoord(coordinates[0], coordinates[1]);
-//                                String message = ""+ obstacles.getObsID()+","+  + coordinates[0]+ ","+ coordinates[1];
-//                                BluetoothConnectionService.sendMessage(message);
-                                Log.d("Hello"+coordinates[0], ""+coordinates[1]);
-                                obstacles.setActionDown(false);
-                                Arena.canDrag(false);
-                                invalidate();
-                                //Direct message to Main Activity
-//                            arena_map.printMessage("ADDOBSTACLE," + obstacles.getObsID() + "," + coordinates[0] + "," + coordinates[1]);
-
-                            } else {
-                                // Out of bounce = go back to starting point
-                                obstacles.setPosition(obstacles.getInitCoords()[0], obstacles.getInitCoords()[1]);
-                                obstacles.setObsMapCoord(-1, -1);
-                                obstacles.setActionDown(false);
-                                Arena.canDrag(false);
-                                invalidate();
-
-                                //Direct message to Main Activity
-//                            MainActivity.printMessage("SUBOBSTACLE," + obstacles.getObsID() + "," + coordinates[0] + "," + coordinates[1]);
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (Obstacle obstacles : obstacleList) {
-                        if (obstacles.isTouched(x, y) && !obstacles.getActionDown()) {
+                        if (obstacles.isTouched(x, y)) {
                             obstacles.setTouchCount(obstacles.getTouchCount()+1);
                             obstacles.setObsFace(obstacles.getTouchCount());
+                            obstacles.setActionDown(false);
                             invalidate();
                         }
                     }
                 }
-                break;
+
         }
 
         if (setRobotPostition) {
             if (isInArena(coordinates)) {
-                if ((coordinates[0] != 0 && coordinates[0] != 19) && (coordinates[1] != 0 && coordinates[1] != 19)) {
-                    setCurCoord(coordinates[0], coordinates[1]);
-                    robot_x = coordinates[0];
-                    robot_y = coordinates[1];
-                    invalidate();
+                setCurCoord(coordinates[0], coordinates[1]);
+                robot_x = coordinates[0];
+                robot_y = coordinates[1];
+                invalidate();
+            }
+        }
+
+        if (canDrag) {
+            if (isInArena(coordinates)) {
+                for (int i = 0; i < obstacleList.length; i++) {
+                    if (obstacleList[i].getActionDown()) {
+                        obstacleList[i].setActionDown(false);
+                        obstacleList[i].setObsMapCoord(coordinates[0], coordinates[1]);
+
+                        obstacleList[i].setPosition((cells[coordinates[0]][coordinates[1]].startX + cells[coordinates[0]][coordinates[1]].endX)/2,
+                                (cells[coordinates[0]][coordinates[1]].startY + cells[coordinates[0]][coordinates[1]].endY)/2);
+                        invalidate();
+                        canDrag = false;
+                        break;
+
+                    }
+                }
+            }
+        }
+
+        for (Obstacle obstacles : obstacleList) {
+            if (obstacles.getActionDown()) {
+                if (isInArena(coordinates)) {
+                    obstacles.setObsMapCoord(coordinates[0], coordinates[1]);
+                    Log.d("Hello"+coordinates[0], ""+coordinates[1]);
+                    obstacles.setPosition(x, y);
+                    obstacles.setActionDown(false);
                 }
             }
         }
 
         Log.d(TAG, "onTouchEvent: Exiting onTouchEvent");
-        //Must be true, else it will only call ACTION_DOWN
         return true;
-        //return super.onTouchEvent(event);
     }
 
     //Draw shapes on the canvas
@@ -792,7 +782,10 @@ public class Arena extends View implements Serializable {
 //         }
 //    }
 
-
+    public void setRobot(int x, int y) {
+         setCurCoord(x, y);
+         invalidate(0,0,this.getWidth(), this.getHeight());
+    }
 
     public void setCurCoord(int col, int row) {
         Log.d(TAG,"Entering setCurCoord");
