@@ -5,10 +5,10 @@ from algorithm.planner.utils.angles import Angle
 class TestSet:
 
     # Test - side by side obstacle
-    obstacles = [[6,6,Angle.NINETY_DEG], 
-    [7,6,Angle.NINETY_DEG], 
-    [7,15,Angle.TWO_SEVENTY_DEG],
-    [3,11,Angle.ZERO_DEG]]
+    # obstacles = [[6,6,Angle.NINETY_DEG], 
+    # [7,6,Angle.NINETY_DEG], 
+    # [7,15,Angle.TWO_SEVENTY_DEG],
+    # [3,11,Angle.ZERO_DEG]]
 
     # obstacles = [ 
     # [7,6,Angle.NINETY_DEG], 
@@ -35,14 +35,15 @@ class TestSet:
 
     # Test 0.1
     # obstacles = [[3,12,Angle.NINETY_DEG],
-    # [7,6,Angle.NINETY_DEG],
+    # [6,6,Angle.NINETY_DEG],
     # [9,13, Angle.TWO_SEVENTY_DEG],
     # [13,6, Angle.ZERO_DEG]]
 
-    # obstacles = [[2,11,Angle.ZERO_DEG],
-    # [6,5,Angle.ZERO_DEG],
-    # [8,12, Angle.ZERO_DEG],
-    # [12,6, Angle.ZERO_DEG]]
+    # Test 0.2 - Original
+    obstacles = [[2,12,Angle.NINETY_DEG],
+    [6,6,Angle.NINETY_DEG],
+    [8,13, Angle.NINETY_DEG],
+    [12,6, Angle.NINETY_DEG]]
 
     # Test 1
     # obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],

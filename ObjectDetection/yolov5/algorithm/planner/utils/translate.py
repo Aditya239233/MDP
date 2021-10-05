@@ -6,7 +6,7 @@ import re
 from numpy import add
 from algorithm.planner.entity.path import Path
 
-SPEED = 0.0097 #unit/ms (48.5cm/s)
+SPEED = 0.01 #unit/ms (50cm/s)
 ROT_TIME = 891.2676813 #ms/rad
 TWO_PI = 2 * math.pi
 
@@ -93,27 +93,27 @@ def get_angle(motion, section):
 def add_rotation_offset(motion, time):
     if motion == "af":
         if time <= 699:
-            time += 30
+            time += 20
         elif time <= 999:
-            time += 5
+            time += 25
     
     elif motion == "ar":
         if time <= 699:
-            time += 40
+            time += 20
         elif time <= 999:
-            time += 10
+            time += 25
     
     elif motion == "df":
         if time <= 699:
-            time += 20
+            time += 30
         elif time <= 999:
-            time += 5
+            time += 30
     
     elif motion == "dr":
         if time <= 699:
             time += 30
         elif time <= 999:
-            time += 10
+            time += 30
 
     return time
 
