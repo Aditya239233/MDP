@@ -179,6 +179,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 	print(f"coor:{android_coor} ------ inst: {instructions}")
 	sendData(instructions, "stm")
 	print(android_coor)
+	time.sleep(1)
 	sendData(android_coor, "android")
 			
 	
@@ -281,13 +282,9 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 
 	for path, img, im0s, vid_cap in dataset:
 
-		 # while True:
-		 #            obstacle_num = getAndroidData()
-		 #            if (obstacle_num=="1" or obstacle_num=="2"  or obstacle_num=="3" or obstacle_num=="4" or obstacle_num=="5" or obstacle_num=="6"):
-		 #                break;
-
+		
 		#get obstacle_num
-
+		print(f"Getting obstacle number...")
 		while not haveID:
 			obstacle_num = getAndroidData()
 			if not startTime:
@@ -382,7 +379,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 					if save_img or save_crop or view_img:  # Add bbox to image
 						c = int(cls)  # integer class
 						label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-						annotator.box_label(xyxy, f"{label} id:{c}", color=colors(c, True))
+						annotator.box_label(xyxy, f"id:{c} - {label}", color=colors(c, True))
 						if save_crop:
 							save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
