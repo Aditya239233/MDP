@@ -93,15 +93,15 @@ def get_angle(motion, section):
 def add_rotation_offset(motion, time):
     if motion == "af":
         if time <= 699:
-            time += 20
+            time += 45
         elif time <= 999:
-            time += 25
+            time += 40
     
     elif motion == "ar":
         if time <= 699:
-            time += 20
+            time += 45
         elif time <= 999:
-            time += 25
+            time += 40
     
     elif motion == "df":
         if time <= 699:
