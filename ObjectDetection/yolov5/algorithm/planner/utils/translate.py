@@ -251,18 +251,28 @@ def translate_tour(tour, tour_seq):
 
         i += 1
     
-    coor_string = android_coor_to_string(list_of_coor)
+    coor_string = android_coor_to_string(list_of_coor, list_of_instructions)
 
     return list_of_instructions, coor_string
 
 
-def android_coor_to_string(list_of_coor):
+def android_coor_to_string(list_of_coor, instructions):
     list_of_path_str = []
 
-    for path in list_of_coor:
+    i = j = 0
+
+    for i in range(len(list_of_coor)):
+        path = list_of_coor[i]
         path_coor = []
-        for coor in path:
-            path_coor.append(str(coor))
+
+        for j in range(len(path)):
+            instruction = instructions[i][j]
+            x = path[j][0]
+            y = path[j][1]
+            yaw = path[j][2]
+
+            to_append = f"({instruction},{x :.3f},{y :.3f},{yaw :.3f})"
+            path_coor.append(to_append)
         
         path_str = ",".join(path_coor)
         list_of_path_str.append(path_str)

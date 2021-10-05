@@ -5,10 +5,10 @@ from algorithm.planner.utils.angles import Angle
 class TestSet:
 
     # Test - side by side obstacle
-    # obstacles = [[6,6,Angle.NINETY_DEG], 
-    # [7,6,Angle.NINETY_DEG], 
-    # [7,15,Angle.TWO_SEVENTY_DEG],
-    # [3,11,Angle.ZERO_DEG]]
+    obstacles = [[6,6,Angle.NINETY_DEG], 
+    [7,6,Angle.NINETY_DEG], 
+    [7,15,Angle.TWO_SEVENTY_DEG],
+    [3,11,Angle.ZERO_DEG]]
 
     # obstacles = [ 
     # [7,6,Angle.NINETY_DEG], 
@@ -19,7 +19,7 @@ class TestSet:
     # [6,12,Angle.TWO_SEVENTY_DEG]]
 
     # Test - single obstacle for checking turning radius
-    obstacles = [[7.5,6,Angle.ONE_EIGHTY_DEG]]
+    # obstacles = [[7,6,Angle.ONE_EIGHTY_DEG]]
 
 
     # Test - obstacle staggered
