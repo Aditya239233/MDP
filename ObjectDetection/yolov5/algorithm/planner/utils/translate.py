@@ -90,6 +90,32 @@ def get_angle(motion, section):
 
     return abs(end_angle - start_angle)
 
+def add_rotation_offset(motion, time):
+    if motion == "af":
+        if time <= 699:
+            time += 30
+        elif time <= 999:
+            time += 5
+    
+    elif motion == "ar":
+        if time <= 699:
+            time += 40
+        elif time <= 999:
+            time += 10
+    
+    elif motion == "df":
+        if time <= 699:
+            time += 20
+        elif time <= 999:
+            time += 5
+    
+    elif motion == "dr":
+        if time <= 699:
+            time += 30
+        elif time <= 999:
+            time += 10
+
+    return time
 
 def get_instruction(section):
     direction = section[0][2]
@@ -103,6 +129,7 @@ def get_instruction(section):
     else:
         angle = get_angle(motion, section)
         dt = angle * ROT_TIME
+        dt = add_rotation_offset(motion, dt)
         return f"{motion}{dt :04.0f}"
 
 # Some yaw are negative, so convert those positive

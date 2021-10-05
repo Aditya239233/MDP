@@ -54,8 +54,7 @@ class Planner:
         tour, tour_seq = self.cache[job_id]
         if tour != None:
             instructions, u = translate_tour(tour, tour_seq)
-            print(u)
-            exit(0)
+            
             return instructions
         else:
             return None
