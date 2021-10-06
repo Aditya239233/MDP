@@ -2,7 +2,7 @@
 class Arena_C:
 
     # Every dimension will be offset by the offset_val
-    OFFSET = 10
+    OFFSET = 15
     X = 40 + 2 * OFFSET
     Y = 40 + 2 * OFFSET
 

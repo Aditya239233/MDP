@@ -1,5 +1,4 @@
 from algorithm.planner.utils.angles import Angle
-from algorithm.planner.utils.arena_utils import Arena_C
 
 class Car_C:
     RF = 4.5  # [m] distance from rear wheel to vehicle front end of vehicle (5.0)
@@ -15,6 +14,6 @@ class Car_C:
     TW = 0.5  # [m] Tyre width (2.6cm)
     MAX_STEER = 0.6  # [rad] maximum steering angle
 
-    TOL_SPACE = 7.6  # camera space - 38 cm from face to back axle
+    TOL_SPACE = 7.0  # camera space - 35 cm from face to back axle
 
     START_POS = 1, 1, Angle.NINETY_DEG # Default starting pos    
