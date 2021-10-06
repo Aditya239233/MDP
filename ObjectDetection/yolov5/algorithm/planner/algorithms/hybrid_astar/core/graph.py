@@ -209,9 +209,6 @@ def get_shortest_tour(waypoint_dict, dist_vector, waypoint_index_dict):
     for node in min_tour:
         waypoints.append(waypoint_dict[node])
 
-    print(min_tour)
-    print(waypoints)
-
     return waypoints, min_tour
 
 # Returns the label of the nearest unvisited node
