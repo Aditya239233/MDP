@@ -25,6 +25,12 @@ class Arena:
     def get_start_pos(self):
         return self.start_pos
 
+    def remove_obstacle(self, label):
+        for i in range(len(self.obstacles)):
+            curr = self.obstacles[i]
+            if curr.img_id == label:
+                self.obstacles.remove(curr)
+
     # important to run this to make sure obstacles and robot start pos are adjusted from real to simulator values
     def process(self):
         if self.obstacles == None or self.processed:

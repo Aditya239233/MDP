@@ -93,7 +93,7 @@ def get_dist_bet_waypoints(waypoint_dict, ox, oy):
         waypoint_to_dist_index[waypoint_lbl] = i
         i += 1
 
-    dist_vector = np.zeros((num_nodes, num_nodes))
+    dist_vector = np.zeros((num_nodes, num_nodes)).tolist()
 
     for i in range(num_nodes-1):
         for dest_lbl in waypoint_labels[i+1:]:
@@ -102,14 +102,16 @@ def get_dist_bet_waypoints(waypoint_dict, ox, oy):
 
             sx, sy, syaw0 = waypoint_dict[src_lbl]
             gx, gy, gyaw0 = waypoint_dict[dest_lbl]
+            
+            print(f"Finding path between {sx}, {sy}, {gx}, {gy}")
 
-            path = hybrid_astar_planning(sx, sy, syaw0, gx, gy, gyaw0, ox, oy, C.XY_RESO, C.YAW_RESO)
-
-            if path == None:
+            try:
+                path = hybrid_astar_planning(sx, sy, syaw0, gx, gy, gyaw0, ox, oy, C.XY_RESO, C.YAW_RESO)
+                dist = find_path_distance(path.x, path.y)
+            except Exception as e:
                 print(f"Finding dist bet. waypoints: Path is not found for\n {sx}, {sy}, {gx}, {gy}")
                 dist = -1
-            else:
-                dist = find_path_distance(path.x, path.y)
+                            
 
             src_index =  waypoint_to_dist_index[src_lbl]
             dest_index = waypoint_to_dist_index[dest_lbl]
@@ -174,45 +176,66 @@ def get_shortest_tour(waypoint_dict, dist_vector, waypoint_index_dict):
         # print(f"{min_path} has the shortest distance of {min_dist}")
 
         # get the path in terms of waypoints (currently it is still in labels)
-        waypoints = []
-        for node in min_tour:
-            waypoints.append(waypoint_dict[node])
 
-        return waypoints, min_tour
+        if min_dist == math.inf:
+            return None, None
+        
 
     # Or else, use a simple greedy algorithm to find shortest tour
-    print("Using Greedy")
-    node_lbls = list(waypoint_dict.keys())
+    else:
+        print("Using Greedy")
+        node_lbls = list(waypoint_dict.keys())
 
-    tour = [START_NODE_LBL]
-    num_of_nodes = len(node_lbls)
-    visited = [False] * num_of_nodes
-    visited[waypoint_index_dict[START_NODE_LBL]] = True
+        min_tour = [START_NODE_LBL]
+        num_of_nodes = len(node_lbls)
+        visited = [False] * num_of_nodes
+        visited[waypoint_index_dict[START_NODE_LBL]] = True
 
-    # Find next nearest neighbor
-    for i in range(1, num_of_nodes):
-        curr_node = tour[-1] # last node
-        nearest_unvisited_node = find_nearest(curr_node, dist_vector, visited, waypoint_index_dict)
-        tour.append(nearest_unvisited_node)
-    
+        # Find next nearest neighbor
+        for i in range(1, num_of_nodes):
+            curr_node = min_tour[-1] # last node
+            nearest_unvisited_node = find_nearest(curr_node, dist_vector, visited, waypoint_index_dict)
+
+            # By right, all nodes should be in the tour.
+            # However, some nodes might be unreachable.
+            # Hence, a None value will be returned to terminate early
+            if nearest_unvisited_node == None:
+                break 
+
+            min_tour.append(nearest_unvisited_node)
+        
+
     waypoints = []
-    for node in tour:
+    for node in min_tour:
         waypoints.append(waypoint_dict[node])
 
-    return waypoints, tour
+    print(min_tour)
+    print(waypoints)
+
+    return waypoints, min_tour
 
 # Returns the label of the nearest unvisited node
 def find_nearest(curr_node, dist_vector, visited, waypoint_index_dict):
     curr_node_index = waypoint_index_dict[curr_node]
     all_dist_to_curr = dist_vector[curr_node_index]
 
-    min_dist = min_node_index = math.inf
+    min_dist = math.inf
+    min_node_index = -1
 
     for i in range(len(all_dist_to_curr)):
         dist = all_dist_to_curr[i]
+
+        # No path can be found from other nodes to the current node (dist = -1)
+        if dist < 0:
+            continue
+
         if i != curr_node_index and not visited[i] and dist < min_dist:
             min_dist = dist
             min_node_index = i
-    
-    visited[min_node_index] = True
-    return list(waypoint_index_dict.keys())[list(waypoint_index_dict.values()).index(min_node_index)]
+
+    # No nearest node found
+    if min_node_index == -1:
+        return None
+    else:
+        visited[min_node_index] = True
+        return list(waypoint_index_dict.keys())[list(waypoint_index_dict.values()).index(min_node_index)]

@@ -30,3 +30,7 @@ def convert_val_to_sim(val):
 
 def convert_sim_to_val(sim):
     return (sim - Arena_C.OFFSET) / Arena_C.SCALE
+
+def get_key_from_dict(a_dict, val):
+    val_index = list(a_dict.values()).index(val)
+    return list(a_dict.keys())[val_index]
