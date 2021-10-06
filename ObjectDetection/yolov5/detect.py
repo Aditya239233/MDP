@@ -9,7 +9,7 @@ Usage:
 from algorithm.planner.main import Runner
 from PiTransmitter import sendData,getAndroidData
 
-from config import WEIGHTSPATH, IMGCONF, CONF, SOURCE,FILELOCATION
+from config import WEIGHTSPATH, IMGCONF, CONF, SOURCE,FILELOCATION,FONT_SIZE
 import argparse
 import sys
 import time
@@ -358,7 +358,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 			s += '%gx%g ' % img.shape[2:]  # print string
 			gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
 			imc = im0.copy() if save_crop else im0  # for save_crop
-			annotator = Annotator(im0, line_width=line_thickness, pil=not ascii)
+			annotator = Annotator(im0, line_width=line_thickness, pil=not ascii,font_size=FONT_SIZE)
 			if len(det):
 				# Rescale boxes from img_size to im0 size
 				det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
@@ -379,7 +379,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 					if save_img or save_crop or view_img:  # Add bbox to image
 						c = int(cls)  # integer class
 						label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-						annotator.box_label(xyxy, f"id:{c} - {label}", color=colors(c, True))
+						annotator.box_label(xyxy, f"id:{c+1} - {label}", color=colors(c, True))
 						if save_crop:
 							save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
@@ -477,7 +477,6 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 							res = cv2.imwrite(f"{save_path[:-1]}{target_ID}.JPG", img_map[lastsentid])
 							displayImageList[obstacle_num-1] = f"{save_path[:-1]}{target_ID}.JPG"
 							displayImage(displayImageList,save_path[:-1])
-
 							haveID = False
 							startTime = None
 					
