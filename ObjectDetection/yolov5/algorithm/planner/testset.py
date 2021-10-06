@@ -38,12 +38,12 @@ class TestSet:
     # [6,6,Angle.NINETY_DEG],
     # [9,13, Angle.TWO_SEVENTY_DEG],
     # [13,6, Angle.ZERO_DEG]]
-
-    # Test 0.2 - Original
+ 
+    # Test 0.2 - Original (test invalid)
     obstacles = [[2,12,Angle.NINETY_DEG],
-    [6,6,Angle.NINETY_DEG],
-    [8,13, Angle.NINETY_DEG],
-    [12,6, Angle.NINETY_DEG]]
+    [7,3,Angle.NINETY_DEG],
+    [7,0,Angle.NINETY_DEG], #invalid
+    [10,19, Angle.TWO_SEVENTY_DEG]]
 
     # Test 1
     # obstacles = [[16, 15, Angle.ONE_EIGHTY_DEG],
@@ -104,4 +104,5 @@ class TestSet:
     # [9,14,Angle.NINETY_DEG],
     # [12,7,Angle.NINETY_DEG],
     # [18,18,Angle.ONE_EIGHTY_DEG],
-    # [18, 13, Angle.ONE_EIGHTY_DEG]]
+    # [18, 13, Angle.ONE_EIGHTY_DEG],
+    # [0,19,Angle.ONE_EIGHTY_DEG]]
