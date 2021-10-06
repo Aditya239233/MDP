@@ -7,6 +7,7 @@ import math
 from heapdict import heapdict
 import numpy as np
 import scipy.spatial.kdtree as kd
+import timeout_decorator
 
 
 from algorithm.planner.algorithms.hybrid_astar.core import astar
@@ -63,7 +64,7 @@ class QueuePrior:
     def get(self):
         return self.queue.popitem()[0]  # pop out element with smallest priority
 
-
+@timeout_decorator.timeout(15, use_signals=False)
 def hybrid_astar_planning(sx, sy, syaw, gx, gy, gyaw, ox, oy, xyreso, yawreso):
     sxr, syr = round(sx / xyreso), round(sy / xyreso)
     gxr, gyr = round(gx / xyreso), round(gy / xyreso)
