@@ -125,7 +125,9 @@ def add_rotation_offset(motion, time):
 
 	# INDOOR
 	if motion == "af":
-		if time <= 499:
+		if time <= 50:
+			time += 0
+		elif time <= 499:
 			time += 20
 		elif time <= 699:
 			time += 8
@@ -133,6 +135,8 @@ def add_rotation_offset(motion, time):
 			time += 0
 	
 	elif motion == "ar":
+		if time <= 50:
+			time += 0
 		if time <= 499:
 			time += 31
 		elif time <= 699:
@@ -141,6 +145,8 @@ def add_rotation_offset(motion, time):
 			time += 5
 
 	elif motion == "df":
+		if time <= 50:
+			time += 0
 		if time <= 499:
 			time += 22
 		elif time <= 699:
@@ -149,6 +155,8 @@ def add_rotation_offset(motion, time):
 			time += 10
 	
 	elif motion == "dr":
+		if time <= 50:
+			time += 0
 		if time <= 499:
 			time += 23
 		elif time <= 699:
