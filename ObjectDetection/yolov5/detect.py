@@ -358,7 +358,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 			s += '%gx%g ' % img.shape[2:]  # print string
 			gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
 			imc = im0.copy() if save_crop else im0  # for save_crop
-			annotator = Annotator(im0, line_width=line_thickness, pil=not ascii,font_size=FONT_SIZE)
+			annotator = Annotator(im0, line_width=line_thickness, pil=not ascii)
 			if len(det):
 				# Rescale boxes from img_size to im0 size
 				det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
@@ -385,27 +385,30 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 
 				# Write results
 				for *xyxy, conf, cls in reversed(det):
-					if save_txt:  # Write to file
-						xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-						line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
-						with open(txt_path + '.txt', 'a') as f:
-							f.write(('%g ' * len(line)).rstrip() % line + '\n')
+					c = int(cls)
+					#if its the selected biggest
+					if(c==biggestDetect):
+						if save_txt:  # Write to file
+							xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+							line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+							with open(txt_path + '.txt', 'a') as f:
+								f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
-					if save_img or save_crop or view_img:  # Add bbox to image
-						c = int(cls)  # integer class
-						label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-						annotator.box_label(xyxy, f"id:{c+1} - {label}", color=colors(c, True))
-						if save_crop:
-							save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
-					if c+1==31:
-						pass
-					else:
-						if conf >0:
-							print(f"{c}-{label}:confidence:{conf},width:{dwidth},height:{dheight},origin x:{origin_x}, origin y:{origin_y}")
-							img_stats_buffer.append({"id":c,"name":label,"confidence":conf,"width":dwidth,"height":dheight,"origin_x":origin_x,"origin_y":origin_y})
-						img_queue.append(c)
-						img_queue_path.append(im0)
-						
+						if save_img or save_crop or view_img:  # Add bbox to image
+							c = int(cls)  # integer class
+							label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+							annotator.box_label(xyxy, f"id:{c+1} - {label}", color=colors(c, True))
+							if save_crop:
+								save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+						if c+1==31:
+							pass
+						else:
+							if conf >0:
+								print(f"{c}-{label}:confidence:{conf},width:{dwidth},height:{dheight},origin x:{origin_x}, origin y:{origin_y}")
+								img_stats_buffer.append({"id":c,"name":label,"confidence":conf,"width":dwidth,"height":dheight,"origin_x":origin_x,"origin_y":origin_y})
+							img_queue.append(c)
+							img_queue_path.append(im0)
+
 			# Print time (inference + NMS)
 			
 			#if(len(pred[0])>1):
@@ -498,7 +501,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 					#stichandshow(img_map,save_path)
 			endTime = datetime.now()
 			if startTime:
-				if((endTime - startTime).total_seconds() >10):
+				if((endTime - startTime).total_seconds() >14):
 					total_secondsss = (endTime - startTime).total_seconds()
 					print(f"{startTime} :::{endTime}:::: total = {total_secondsss} one cycle ended")
 					haveID = False
