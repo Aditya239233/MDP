@@ -34,17 +34,18 @@ class TestSet:
     # [10,10, Angle.NINETY_DEG]]
 
     # Test 0.1
-    # obstacles = [[3,12,Angle.NINETY_DEG],
-    # [6,6,Angle.NINETY_DEG],
-    # [9,13, Angle.TWO_SEVENTY_DEG],
-    # [13,6, Angle.ZERO_DEG]]
+    obstacles = [[2,12,Angle.NINETY_DEG],
+    [6,6,Angle.TWO_SEVENTY_DEG],
+    [11,11, Angle.NINETY_DEG],
+    [18,18, Angle.TWO_SEVENTY_DEG],
+    [15,2,Angle.ONE_EIGHTY_DEG]]
 
     # Test 0.15
-    obstacles = [[2,12,Angle.NINETY_DEG],
-    [6,6,Angle.NINETY_DEG],
-    [8,13, Angle.NINETY_DEG],
-    [19,16, Angle.TWO_SEVENTY_DEG],
-    [19,0, Angle.ONE_EIGHTY_DEG]]
+    # obstacles = [[2,12,Angle.NINETY_DEG],
+    # [6,6,Angle.NINETY_DEG],
+    # [8,13, Angle.NINETY_DEG],
+    # [19,16, Angle.TWO_SEVENTY_DEG],
+    # [19,0, Angle.ONE_EIGHTY_DEG]]
  
     # Test 0.2 - test invalid
     # obstacles = [[2,12,Angle.NINETY_DEG],
