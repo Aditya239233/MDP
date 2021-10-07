@@ -1,5 +1,5 @@
 package com.example.mdp_android;
-
+import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
@@ -46,7 +46,7 @@ public class arena_map extends AppCompatActivity {
     static TextView txtRobotDirection, txtRobotCoord;
     BluetoothConnectionService mBluetoothConnection;
     ProgressDialog myDialog;
-
+    public boolean canRecieve = true;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -95,7 +95,20 @@ public class arena_map extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 Arena tempArenaMap = arena_map.getArenaMap();
-                tempArenaMap.resetArena();
+                if (Arena.canRotate) {
+                    if (tempArenaMap.getRobotDirection().toUpperCase().charAt(0) == 'N')
+                        tempArenaMap.setRobotDirection("W");
+                    else if (tempArenaMap.getRobotDirection().toUpperCase().charAt(0) == 'W')
+                        tempArenaMap.setRobotDirection("S");
+                    else if (tempArenaMap.getRobotDirection().toUpperCase().charAt(0) == 'S')
+                        tempArenaMap.setRobotDirection("E");
+                    else if (tempArenaMap.getRobotDirection().toUpperCase().charAt(0) == 'E')
+                        tempArenaMap.setRobotDirection("N");
+                }
+                else {
+
+                    tempArenaMap.resetArena();
+                }
             }
         });
 
@@ -112,6 +125,7 @@ public class arena_map extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG,"start button called");
                 BluetoothConnectionService.sendMessage(Arena.sendArenaInformation());
+//                handleData("");
             }
         });
 
@@ -208,6 +222,7 @@ public class arena_map extends AppCompatActivity {
             statusBox.append(message+"\n");
             String[] parts = message.split(",");
             String type = parts[0];
+            int index;
             switch(type)
             {
                 case "TARGET":
@@ -216,6 +231,12 @@ public class arena_map extends AppCompatActivity {
                     try {
                         String obsID = parts[1];
                         String targetID = parts[2];
+                        if (targetID.contains("TARGET"))
+                            if (targetID.indexOf("T") != 0) {
+                                index = targetID.indexOf("T");
+                                targetID = targetID.substring(0, index);
+                            }
+
                         arenaMap.setBlockId(obsID,targetID);
                         // your code here
                     }catch(Exception e)
@@ -249,8 +270,14 @@ public class arena_map extends AppCompatActivity {
                     Log.d(TAG,"Invalid format: unable to recognize message type");
                 }
             }
-            if (message.charAt(0) == '(')
-                handleData(message);
+            try {
+                if (message.charAt(0) == '(' && canRecieve) {
+                    handleData(message);
+                    canRecieve = false;
+                }
+            }
+            catch (Exception e) {
+            }
             arenaMap.updateMap(message);
             sharedPreferences();
             String receivedText = sharedPreferences.getString("message", "") + "\n" + message;
@@ -322,14 +349,15 @@ public class arena_map extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-//                String message = "(df0456,1.266,2.009,1.059),(w1471,4.758,8.231,1.059),(df1400,7.544,9.016,5.771),(ar0944,6.500,10.800,4.712)|(ar1509,8.796,12.831,3.019),(dr0219,9.295,12.831,3.265),(af1290,7.500,10.800,4.712)|(df0845,6.651,9.141,3.764),(ar0938,8.694,9.340,2.712),(df1017,7.500,11.200,1.571)|(dr0245,7.576,10.647,1.846),(af0652,6.707,11.817,2.578),(dr0502,7.800,11.500,3.142)";
+//                String message = "(w1500,1.000,8.500,1.571),(af0238,0.939,9.000,1.815),(w0599,0.214,11.906,1.815),(df0675,0.398,13.371,1.081),(w0177,0.814,14.151,1.081),(df1400,3.583,14.995,5.793),(ar0973,2.500,16.800,4.712)|(ar1911,5.663,18.515,2.569),(s0079,5.994,18.301,2.569),(dr1401,8.825,18.906,4.141),(af0519,8.500,17.800,4.712)|(df0040,8.500,17.795,4.712),(w0199,8.500,16.800,4.712),(df0260,8.441,16.310,4.466),(ar2735,12.440,15.451,1.397),(s1016,11.562,10.447,1.397),(ar2645,7.500,10.800,4.712)|(af1692,10.196,8.859,0.327),(dr0603,9.154,8.062,0.981),(af0536,9.500,9.200,1.571)|(df1510,11.806,11.230,6.159),(w1057,17.051,10.577,6.159),(df2690,16.800,6.500,3.142)";
                 String[] messages = message.split("\\|");
                 String main = "";
+                Log.d(TAG,message);
                 for (String part: messages) {
                     part = part.replaceAll(" ", "");
-                    part = part.replaceAll("\\),\\(", "-");
+                    part = part.replaceAll("\\),\\(", "_");
 
-                    String[] instructions = part.split("-");
+                    String[] instructions = part.split("_");
 //                    Log.d(TAG, part);
 
 
@@ -339,14 +367,23 @@ public class arena_map extends AppCompatActivity {
                         instruction = instruction.replaceAll("\\)", "");
 //                        Log.d(TAG, instruction);
 
-                        String[] i = instruction.split("-");
+                        String[] i = instruction.split("_");
                         for (String commands : i) {
 //                            Log.d(TAG, commands);
                             String[] command = commands.split(",");
                             String time = command[0];
                             time = time.replaceAll("\\D+","");
-                            int x = (int) Double.parseDouble(command[1]);
+                            Log.d(TAG, commands);
+;                           int x = (int) Double.parseDouble(command[1]);
                             int y = (int) Double.parseDouble(command[2]);
+                            if (x < 0)
+                                x = 0;
+                            if (y < 0)
+                                y = 0;
+                            if (x > 19)
+                                x = 19;
+                            if (y > 19)
+                                y = 19;
                             int angle = (int) Math.toDegrees(Double.parseDouble(command[3]));
                             main += "(" + x +"," + y  +"," + angle + "," + time + ")";
 //                            Log.d(""+angle, ""+x+" "+y);
@@ -357,6 +394,11 @@ public class arena_map extends AppCompatActivity {
                 }
                 Log.d(TAG, main);
                 String[] commands_set = main.split(";");
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 for (String commands: commands_set) {
                     String[] command = commands.split("\\)\\(");
                     for (String c: command) {
@@ -380,16 +422,18 @@ public class arena_map extends AppCompatActivity {
                             direction = "west";
                         else
                             direction = "south";
-                        arenaMap.setRobotLocation(x, y, direction);
                         try {
-                            Thread.sleep(time);
+                            TimeUnit.MILLISECONDS.sleep(1750);
+                            TimeUnit.MILLISECONDS.sleep(time);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        arenaMap.setRobotLocation(x, y, direction);
 
                     }
                     try {
-                        Thread.sleep(10000);
+//                        Thread.sleep(10000);
+                        TimeUnit.SECONDS.sleep(11);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

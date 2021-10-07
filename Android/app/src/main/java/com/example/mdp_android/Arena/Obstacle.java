@@ -19,7 +19,7 @@ public class Obstacle {
         this.x = x;
         this.y = y;
         this.touchCount = touchCount;
-        this.obsFace = obsFace;
+        this.obsFace = "north";
         this.obsID = obsID;
         this.obsPaint = obsPaint;
         this.targetID = targetID;

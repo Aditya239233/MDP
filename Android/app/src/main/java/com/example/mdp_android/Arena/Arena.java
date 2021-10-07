@@ -759,6 +759,7 @@ public class Arena extends View implements Serializable {
             robotDirection = "west";
         }
         Log.d(TAG,robotDirection);
+        invalidate();
     }
 
     public String getRobotDirection(){
@@ -793,12 +794,12 @@ public class Arena extends View implements Serializable {
         curCoord[1] = row;
         robot_x = col;
         robot_y = row;
-
+        cells[col][row].setType("robot");
         Log.d(TAG, col + "," + row);
 
-        for (int x = col - 1; x <= col + 1; x++)
-            for (int y = curCoord[1] - 1; y <= curCoord[1] + 1; y++)
-                cells[x][y].setType("robot");
+//        for (int x = col - 1; x <= col + 1; x++)
+//            for (int y = curCoord[1] - 1; y <= curCoord[1] + 1; y++)
+//                cells[x][y].setType("robot");
         Log.d(TAG,"Exiting setCurCoord");
     }
 
@@ -863,18 +864,18 @@ public class Arena extends View implements Serializable {
     }
     public static String sendArenaInformation() {
         String robot_direction = robotDirection;
-        robot_x = 1;
-        robot_y = 1;
 
-        String message = "ROBOT," + robot_x +"," + robot_y +"," + robot_direction + ";";
+        String message = "ROBOT," + robot_x +"," + robot_y +"," + robot_direction.toUpperCase().charAt(0) + ";";
         for (Obstacle obstacles : obstacleList) {
             String id = obstacles.getObsID();
             String obstacle_direction = obstacles.getObsFace();
             float obstacle_coords[] = obstacles.getObsMapCoord();
-            message = message + "OBSTACLE," + id + "," + obstacle_coords[0] + "," + obstacle_coords[1] + "," + obstacle_direction + ";";
+            if (obstacle_coords[0] == -1 || obstacle_coords[1] == -1)
+                continue;
+            message = message + "OBSTACLE," + id + "," + obstacle_coords[0] + "," + obstacle_coords[1] + "," + obstacle_direction.charAt(0) + ";";
 
         }
-
+        Log.d("meow", message);
         return message;
 
     }
