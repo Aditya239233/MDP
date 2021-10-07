@@ -35,8 +35,8 @@ class TestSet:
 
     # Test 0.1
     obstacles = [[2,12,Angle.NINETY_DEG],
-    [6,6,Angle.TWO_SEVENTY_DEG],
-    [11,11, Angle.NINETY_DEG],
+    [6,6,Angle.NINETY_DEG],
+    [8,13, Angle.NINETY_DEG],
     [18,18, Angle.TWO_SEVENTY_DEG],
     [15,2,Angle.ONE_EIGHTY_DEG]]
 
