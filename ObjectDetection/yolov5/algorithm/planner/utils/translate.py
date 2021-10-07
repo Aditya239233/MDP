@@ -91,38 +91,70 @@ def get_angle(motion, section):
 	return abs(end_angle - start_angle)
 
 def add_rotation_offset(motion, time):
+	# if motion == "af":
+	# 	if time <= 499:
+	# 		time += 20
+	# 	elif time <= 699:
+	# 		time += 10
+	# 	elif time <=1000:
+	# 		time += 5
+	
+	# elif motion == "ar":
+	# 	if time <= 300:
+	# 		time += 30
+	# 	elif time <= 699:
+	# 		time += 20
+	# 	elif time <=1000:
+	# 		time += 10
+
+	# elif motion == "df":
+	# 	if time <= 499:
+	# 		time += 40
+	# 	elif time <= 699:
+	# 		time += 20
+	# 	elif time <=1000:
+	# 		time += 10
+	
+	# elif motion == "dr":
+	# 	if time <= 499:
+	# 		time += 35
+	# 	elif time <= 699:
+	# 		time += 20
+	# 	elif time <=1000:
+	# 		time += 10
+
+	# INDOOR
 	if motion == "af":
 		if time <= 499:
 			time += 20
 		elif time <= 699:
-			time += 10
+			time += 8
 		elif time <=1000:
-			time += 5
+			time += 0
 	
 	elif motion == "ar":
-		if time <= 300:
-			time += 30
+		if time <= 499:
+			time += 31
 		elif time <= 699:
-			time += 20
+			time += 15
 		elif time <=1000:
-			time += 10
+			time += 5
 
-	
 	elif motion == "df":
 		if time <= 499:
-			time += 40
+			time += 22
 		elif time <= 699:
-			time += 20
+			time += 15
 		elif time <=1000:
 			time += 10
 	
 	elif motion == "dr":
 		if time <= 499:
-			time += 35
+			time += 23
 		elif time <= 699:
-			time += 20
+			time += 12
 		elif time <=1000:
-			time += 10
+			time += 7
 
 	return time
 

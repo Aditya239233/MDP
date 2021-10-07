@@ -64,7 +64,7 @@ class QueuePrior:
     def get(self):
         return self.queue.popitem()[0]  # pop out element with smallest priority
 
-@timeout_decorator.timeout(15, use_signals=False)
+@timeout_decorator.timeout(30, use_signals=False)
 def hybrid_astar_planning(sx, sy, syaw, gx, gy, gyaw, ox, oy, xyreso, yawreso):
     sxr, syr = round(sx / xyreso), round(sy / xyreso)
     gxr, gyr = round(gx / xyreso), round(gy / xyreso)
