@@ -137,7 +137,7 @@ def add_rotation_offset(motion, time):
 	elif motion == "ar":
 		if time <= 50:
 			time += 0
-		if time <= 499:
+		elif time <= 499:
 			time += 31
 		elif time <= 699:
 			time += 15
@@ -147,7 +147,7 @@ def add_rotation_offset(motion, time):
 	elif motion == "df":
 		if time <= 50:
 			time += 0
-		if time <= 499:
+		elif time <= 499:
 			time += 22
 		elif time <= 699:
 			time += 15
@@ -157,7 +157,7 @@ def add_rotation_offset(motion, time):
 	elif motion == "dr":
 		if time <= 50:
 			time += 0
-		if time <= 499:
+		elif time <= 499:
 			time += 23
 		elif time <= 699:
 			time += 12
