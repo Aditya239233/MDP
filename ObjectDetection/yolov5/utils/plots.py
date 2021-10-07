@@ -93,8 +93,7 @@ class Annotator:
 				w, h = cv2.getTextSize(label, 0, fontScale=self.lw / 3, thickness=tf)[0]
 				c2 = c1[0] + w, c1[1] - h - 3
 				cv2.rectangle(self.im, (0,0), (20+w,20+h), color, -1, cv2.LINE_AA)  # filled
-                cv2.putText(self.im, label, (2+2, h+4), 0, self.lw / 3, (0,0,0), thickness=tf,
-                            lineType=cv2.LINE_AA)
+				cv2.putText(self.im, label, (2+2, h+4), 0, self.lw / 3, (0,0,0), thickness=tf,lineType=cv2.LINE_AA)
 				#cv2.rectangle(self.im, c1, c2, color, -1, cv2.LINE_AA)  # filled
 				#cv2.putText(self.im, label, (c1[0], c1[1] - 2), 0, self.lw / 3, txt_color, thickness=tf,
 				#            lineType=cv2.LINE_AA)

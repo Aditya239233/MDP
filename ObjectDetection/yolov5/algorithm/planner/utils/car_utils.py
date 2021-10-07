@@ -12,7 +12,7 @@ class Car_C:
     WB = 2.8  # [m] Wheel base (3.0)
     TR = 0.6  # [m] Tyre radius (3.0cm)
     TW = 0.5  # [m] Tyre width (2.6cm)
-    MAX_STEER = 0.58  # [rad] maximum steering angle (20.5 - 0.6), (21.5 - 0.58)
+    MAX_STEER = 0.6  # [rad] maximum steering angle (20.5 - 0.6), (21.5 - 0.58)
 
     TOL_SPACE = 7.6  # camera space - 38 cm from face to back axle
 
