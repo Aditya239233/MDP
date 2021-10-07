@@ -368,6 +368,21 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 					n = (det[:, -1] == c).sum()  # detections per class
 					s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
+				#remove result, only keep one
+				maxArea = 0.0
+				biggestDetect = 0
+				for *xyxy, conf, cls in reversed(det):
+					xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+					origin_x = xywh[0]
+					origin_y = xywh[1]
+					dwidth=xywh[2]
+					dheight=xywh[3]
+					c = int(cls)
+					area = dwidth*dheight
+					if(area>maxArea):
+						maxArea = area;
+						biggestDetect = c
+
 				# Write results
 				for *xyxy, conf, cls in reversed(det):
 					if save_txt:  # Write to file
@@ -382,7 +397,15 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 						annotator.box_label(xyxy, f"id:{c+1} - {label}", color=colors(c, True))
 						if save_crop:
 							save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
-
+					if c+1==31:
+						pass
+					else:
+						if conf >0:
+							print(f"{c}-{label}:confidence:{conf},width:{dwidth},height:{dheight},origin x:{origin_x}, origin y:{origin_y}")
+							img_stats_buffer.append({"id":c,"name":label,"confidence":conf,"width":dwidth,"height":dheight,"origin_x":origin_x,"origin_y":origin_y})
+						img_queue.append(c)
+						img_queue_path.append(im0)
+						
 			# Print time (inference + NMS)
 			
 			#if(len(pred[0])>1):
@@ -399,39 +422,31 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 				cv2.waitKey(1)  # 1 millisecond
 			#print(f"{save_path}")
 
-			detectedImage = False;
-			for i, det in enumerate(pred):
+			# detectedImage = False;
+			# for i, det in enumerate(pred):
 
 			   
-				#print(f"i:{i},det{det}")
-				for *xyxy, conf, cls in reversed(det):
-					xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-					origin_x = xywh[0]
-					origin_y = xywh[1]
-					dwidth=xywh[2]
-					dheight=xywh[3]
-					c = int(cls)
-					label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-					if c+1==31:# if detected bulleye send over as 31 with obstacle ID as 100
-						continue
-					else:
-						if conf >0:
+			# 	#print(f"i:{i},det{det}")
+			# 	for *xyxy, conf, cls in reversed(det):
+			# 		xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+			# 		origin_x = xywh[0]
+			# 		origin_y = xywh[1]
+			# 		dwidth=xywh[2]
+			# 		dheight=xywh[3]
+			# 		c = int(cls)
+			# 		label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+			# 		if c+1==31:# if detected bulleye send over as 31 with obstacle ID as 100
+			# 			continue
+			# 		else:
+			# 			if conf >0:
 
-							print(f"{c}-{label}:confidence:{conf},width:{dwidth},height:{dheight},origin x:{origin_x}, origin y:{origin_y}")
-							img_stats_buffer.append({"id":c,"name":label,"confidence":conf,"width":dwidth,"height":dheight,"origin_x":origin_x,"origin_y":origin_y})
-						img_queue.append(c)
-						img_queue_path.append(im0)
-						if conf>0:
-							detectedImage = True;
-				#if(len(pred[0])>0):
-					#print(f"Confidence: {det[:, :4]}")
-					#print(f"{pred[3]}Confidence: {pred[4]}")
-
-			# if dataset.mode == 'image' and detectedImage:
-			#     res = cv2.imwrite(save_path+".JPG", im0)
-			#     print(f"{res} result")
-
-			#Send the last img_stats_buffer over to algo here---------------
+			# 				print(f"{c}-{label}:confidence:{conf},width:{dwidth},height:{dheight},origin x:{origin_x}, origin y:{origin_y}")
+			# 				img_stats_buffer.append({"id":c,"name":label,"confidence":conf,"width":dwidth,"height":dheight,"origin_x":origin_x,"origin_y":origin_y})
+			# 			img_queue.append(c)
+			# 			img_queue_path.append(im0)
+			# 			if conf>0:
+			# 				detectedImage = True;
+		
 			
 			
 			elements_count = {}
