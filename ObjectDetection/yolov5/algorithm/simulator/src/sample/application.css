@@ -1,0 +1,16 @@
+/*#robot {*/
+/*    -fx-fill: "red";*/
+/*}*/
+
+.arc {
+    -fx-background-color: "black";
+}
+
+.button {
+    -fx-font-family: "Lucida Console";
+}
+
+.path {
+    /*-fx-stroke: Color.RED;*/
+    -fx-stroke-width: 2.0;
+}
