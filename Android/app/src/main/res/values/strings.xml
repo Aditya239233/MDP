@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MDP-Android</string>
+
+    <string name="tab_text_1">Map Settings</string>
+    <string name="tab_text_2">Communication</string>
+
+</resources>
